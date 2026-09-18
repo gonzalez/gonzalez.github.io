@@ -1,0 +1,167 @@
+/* ==========================================================================
+   Design tokens
+
+   Strictly monochrome. There is no accent hue anywhere in this file — the
+   hierarchy is carried by contrast, weight, size and whitespace alone.
+   ========================================================================== */
+
+:root {
+  color-scheme: light dark;
+
+  /* Light scheme. Not pure #fff/#000 — a hair off each end reads softer
+     on real displays without muddying the contrast ratio. */
+  --bg: #fbfbfa;
+  --fg: #161614;
+  --fg-muted: #5c5c57;
+  --fg-subtle: #8a8a83;
+  --rule: #e2e2dd;
+  --rule-strong: #c9c9c2;
+  --selection-bg: #161614;
+  --selection-fg: #fbfbfa;
+
+  /* Type */
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+
+  /* Layout */
+  --measure: 68ch;
+  --gutter: clamp(1.25rem, 5vw, 2.5rem);
+
+  /* Vertical rhythm */
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1.25rem;
+  --space-lg: 2rem;
+  --space-xl: 3.5rem;
+  --space-2xl: clamp(4rem, 12vw, 7rem);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #101010;
+    --fg: #ededea;
+    --fg-muted: #9e9e98;
+    --fg-subtle: #6e6e69;
+    --rule: #262625;
+    --rule-strong: #3d3d3b;
+    --selection-bg: #ededea;
+    --selection-fg: #101010;
+  }
+}
+
+/* ==========================================================================
+   Reset
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  line-height: 1.65;
+  letter-spacing: -0.003em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background-color: var(--selection-bg);
+  color: var(--selection-fg);
+}
+
+img,
+picture,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+h1,
+h2,
+h3 {
+  font-weight: 560;
+  line-height: 1.2;
+  letter-spacing: -0.022em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: var(--rule-strong);
+  transition: text-decoration-color 120ms ease;
+}
+
+a:hover {
+  text-decoration-color: currentColor;
+}
+
+/* A visible, unobtrusive focus ring — the one piece of "chrome" retained,
+   because removing it would break keyboard navigation. */
+:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ==========================================================================
+   Accessibility
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

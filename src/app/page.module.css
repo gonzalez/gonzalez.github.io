@@ -1,0 +1,42 @@
+/* A single centered column. Everything on the page sits inside this
+   measure — there is no full-bleed element anywhere. */
+.shell {
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  margin-block-start: var(--space-2xl);
+}
+
+.sectionHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+/* Section headings are deliberately small and quiet — they are labels for
+   the content beneath, not competing display type. */
+.heading {
+  margin-block-end: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+}
+
+.sectionHeader .heading {
+  margin-block-end: var(--space-md);
+}
+
+.count {
+  margin-block-end: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--fg-subtle);
+}

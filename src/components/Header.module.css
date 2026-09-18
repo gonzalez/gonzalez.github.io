@@ -1,0 +1,32 @@
+.header {
+  padding-block-start: var(--space-2xl);
+}
+
+.name {
+  font-family: var(--font-mono);
+  font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2.125rem);
+  font-weight: 560;
+  letter-spacing: -0.01em;
+}
+
+.socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin-block-start: var(--space-md);
+  padding: 0;
+  list-style: none;
+}
+
+.social {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--fg-muted);
+  transition:
+    color 120ms ease,
+    text-decoration-color 120ms ease;
+}
+
+.social:hover {
+  color: var(--fg);
+}

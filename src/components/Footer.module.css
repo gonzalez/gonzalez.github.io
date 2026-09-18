@@ -1,0 +1,19 @@
+.footer {
+  margin-block-start: var(--space-2xl);
+  padding-block: var(--space-lg) var(--space-xl);
+  border-block-start: 1px solid var(--rule);
+}
+
+.line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-xs);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--fg-subtle);
+}
+
+.separator {
+  color: var(--rule-strong);
+}

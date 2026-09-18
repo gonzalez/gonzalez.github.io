@@ -1,0 +1,95 @@
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  /* A rule above the first row closes the list off against the heading. */
+  border-block-start: 1px solid var(--rule);
+}
+
+.item {
+  border-block-end: 1px solid var(--rule);
+}
+
+/* Rows, not cards: no border radius, no shadow, no fill. The hairline and
+   the padding do all the separating. */
+.row {
+  position: relative;
+  padding-block: var(--space-md);
+  transition: background-color 120ms ease;
+}
+
+/* Bleed the hover fill into the gutter so the row reads as full-width
+   without the list itself needing a background. */
+.row::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline: calc(var(--space-sm) * -1);
+  background-color: transparent;
+  transition: background-color 120ms ease;
+  pointer-events: none;
+}
+
+.row:hover::before {
+  /* color-mix keeps this monochrome — it is the foreground at 4% over the
+     background, never a tinted hue. */
+  background-color: color-mix(in srgb, var(--fg) 4%, transparent);
+}
+
+.name {
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.link {
+  text-decoration-color: transparent;
+}
+
+.link:hover {
+  text-decoration-color: currentColor;
+}
+
+/* Stretch the anchor over the whole row. */
+.link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.description {
+  margin-block-start: var(--space-2xs);
+  max-width: 60ch;
+  font-size: 0.9375rem;
+  color: var(--fg-muted);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-sm);
+  margin-block-start: var(--space-xs);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--fg-subtle);
+}
+
+/* Interpuncts between meta items, drawn with a pseudo-element so the markup
+   stays free of presentational separators. */
+.metaItem + .metaItem::before {
+  content: '·';
+  margin-inline-end: var(--space-sm);
+}
+
+.empty {
+  padding-block: var(--space-md);
+  color: var(--fg-subtle);
+}
+
+@media (max-width: 34rem) {
+  .row::before {
+    inset-inline: calc(var(--space-xs) * -1);
+  }
+}
