@@ -1,0 +1,8 @@
+{
+  "name": "gonzalez.github.io",
+  "description": "This site: a static Astro digital garden, rebuilt from the earlier one-page repository export, with content kept as files in the repo.",
+  "technologies": ["Astro", "TypeScript", "Tailwind CSS"],
+  "status": "Active",
+  "github": "https://github.com/gonzalez/gonzalez.github.io",
+  "writeUp": "/writing/rebuilding-this-site/"
+}

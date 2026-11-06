@@ -18,6 +18,8 @@
  *   8. home-markers    — the home page carries the three garden markers
  *                        (Currently Exploring / Selected Projects / Recent Writing)
  *   9. sitemap-roots   — the sitemap lists all four roots
+ *  10. home-entries    — home lists at least three real post/project entries
+ *                        (TASK-5 acceptance: seeded home, no thin landing)
  *
  * Exits 0 with a summary when every probe passes; exits 1 listing each failure.
  * fast-xml-parser rides along with @astrojs/rss (the serializer this feed is
@@ -204,6 +206,22 @@ if (!existsSync(homePath)) {
     'home-markers',
     missing.length === 0,
     missing.length ? `home is missing: ${missing.join(', ')}` : ''
+  );
+}
+
+// --- probe 10: home carries at least three seeded entries -------------------
+
+// Each project/note row on the home page is tagged `data-home-entry`; the
+// probe counts them so "three real entries" is a contract, not a hope.
+{
+  const home = existsSync(homePath) ? readFileSync(homePath, 'utf8') : '';
+  const count = (home.match(/data-home-entry=/g) ?? []).length;
+  probe(
+    'home-entries',
+    count >= 3,
+    existsSync(homePath)
+      ? `home lists ${count} post/project entr${count === 1 ? 'y' : 'ies'}, need ≥ 3`
+      : 'dist/index.html missing'
   );
 }
 

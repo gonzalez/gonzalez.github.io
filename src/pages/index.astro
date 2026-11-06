@@ -27,6 +27,7 @@ const projects = (await getCollection('projects')).sort((a, b) =>
 const exploring = [
   'Agentic development outer loops — the setup and checks around a coding agent',
   'Tending this digital garden itself',
+  'Deterministic, locally-validated builds — one gate that must pass before anything publishes',
 ];
 
 const formatDate = (date: Date) =>
@@ -49,7 +50,8 @@ const formatDate = (date: Date) =>
     </p>
     <p>
       A personal digital garden: notes under cultivation, a small directory of
-      projects, and the work behind them — agentic development and      open-source contributions.
+      projects, and the work behind them — agentic development and
+      open-source contributions.
     </p>
 
     <section class="mt-10">
@@ -64,7 +66,7 @@ const formatDate = (date: Date) =>
       <ul class="mt-2 space-y-3">
         {
           projects.map((project) => (
-            <li>
+            <li data-home-entry="project">
               {project.data.github ? (
                 <a href={project.data.github}>{project.data.name}</a>
               ) : (
@@ -87,7 +89,7 @@ const formatDate = (date: Date) =>
       <ul class="mt-2 space-y-2">
         {
           recent.map((note) => (
-            <li>
+            <li data-home-entry="note">
               <a href={`/writing/${note.id}/`}>{note.data.title}</a>
               <span class="font-mono text-sm text-ink-muted">
                 {' '}
