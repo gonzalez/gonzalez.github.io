@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import HeadingWord from '../../components/HeadingWord.astro';
 
 // Newest first; title breaks date ties so the order is deterministic even
 // when several notes share a creation date.
@@ -26,7 +27,7 @@ const formatDate = (date: Date) =>
   description="The garden: notes at seedling, growing, and evergreen maturity."
 >
   <main class="reading-column">
-    <h1 class="text-3xl font-semibold tracking-tight">Writing</h1>
+    <h1 class="text-3xl font-semibold tracking-tight"><HeadingWord text="Writing" /></h1>
     <p class="mt-2 text-ink-muted">
       A digital garden. Notes start as <em>seedlings</em>, grow as I learn, and
       become <em>evergreen</em> when I trust them to stay true.

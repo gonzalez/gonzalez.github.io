@@ -1,0 +1,48 @@
+---
+import { readFileSync } from 'node:fs';
+
+interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+
+// TS mirror of scripts/render_wordmark.py slugify() — the PNG filenames must
+// match exactly what prebuild-wordmark.sh rendered.
+const slug =
+  text.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') ||
+  'wordmark';
+
+// Fail-soft: a missing or malformed manifest renders normal text instead of a
+// broken image (e.g. a fresh checkout before the rasters land).
+type Dims = Record<string, Record<string, number[]>>;
+let raster: Dims | null = null;
+try {
+  const manifest = JSON.parse(
+    readFileSync(new URL('../../public/assets/word/manifest.json', import.meta.url), 'utf8')
+  );
+  const entry = manifest[slug];
+  if (entry?.light?.['1'] && entry?.dark?.['1']) raster = entry;
+} catch {
+  /* no manifest — plain-text heading */
+}
+
+const dims = raster;
+const inks = ['light', 'dark'] as const;
+---
+
+{
+  dims ? (
+    inks.map((ink) => (
+      <img
+        class={`heading-word heading-word--${ink}`}
+        src={`/assets/word/${ink}/${slug}@1x.png`}
+        srcset={`/assets/word/${ink}/${slug}@1x.png 1x, /assets/word/${ink}/${slug}@2x.png 2x`}
+        width={dims[ink]['1'][0]}
+        height={dims[ink]['1'][1]}
+        alt={text}
+      />
+    ))
+  ) : (
+    <span>{text}</span>
+  )
+}

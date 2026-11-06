@@ -113,24 +113,36 @@
 }
 /* Default: light ink on the light paper — also the safe fallback for browsers
    with no prefers-color-scheme support (they keep the light token palette). */
-.masthead-word--light {
+.masthead-word--light,
+.heading-word--light {
   display: block;
 }
-.masthead-word--dark {
+.masthead-word--dark,
+.heading-word--dark {
   display: none;
 }
+/* Heading rasters: scale with the h1's em so the PNG sits at text-3xl size;
+   width/height attrs on the <img> keep the ratio before it loads. */
+.heading-word {
+  height: 0.95em;
+  width: auto;
+}
 @media (prefers-color-scheme: dark) {
-  :root:where(:not([data-theme='light'])) .masthead-word--light {
+  :root:where(:not([data-theme='light'])) .masthead-word--light,
+  :root:where(:not([data-theme='light'])) .heading-word--light {
     display: none;
   }
-  :root:where(:not([data-theme='light'])) .masthead-word--dark {
+  :root:where(:not([data-theme='light'])) .masthead-word--dark,
+  :root:where(:not([data-theme='light'])) .heading-word--dark {
     display: block;
   }
 }
-[data-theme='dark'] .masthead-word--light {
+[data-theme='dark'] .masthead-word--light,
+[data-theme='dark'] .heading-word--light {
   display: none;
 }
-[data-theme='dark'] .masthead-word--dark {
+[data-theme='dark'] .masthead-word--dark,
+[data-theme='dark'] .heading-word--dark {
   display: block;
 }
 

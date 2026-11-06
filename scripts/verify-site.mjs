@@ -36,6 +36,9 @@
  *  16. syntax-highlight— notes that contain fenced code blocks ship them
  *                        highlighted (`astro-code` class present in dist)
  *                        (TASK-3)
+ *  17. heading-rasters  — DDC heading PNGs (4 slugs × both inks × 1x+2x) +
+ *                        manifest.json ship in dist, and directory headings
+ *                        carry width/height attrs (TASK-9, Review Focus 1–3)
  *
  * Lighthouse performance is deliberately NOT gated here: per the plan it is
  * the operator's manual review (`npm run preview`/`npx serve dist`), not a
@@ -407,6 +410,53 @@ const CODE_FENCE = /^```/m;
     }
   }
   probe('syntax-highlight', errors.length === 0, errors.join('; '));
+}
+
+// --- probe 17: DDC heading rasters (TASK-9) ---------------------------------
+//
+// Every static heading ships both ink variants at 1x+2x, the dimension
+// manifest is present in dist (CI path builds without the licensed font), and
+// directory headings render as <img> with width/height (no layout shift).
+{
+  const HEADING_SLUGS = ['more-is-coming-soon', 'writing', 'projects', 'about'];
+  const errors = [];
+  const manifestPath = join(DIST, 'assets/word/manifest.json');
+  if (!existsSync(DIST)) errors.push('dist/ missing — run `npm run build` first');
+  if (!existsSync(manifestPath)) {
+    errors.push('dist/assets/word/manifest.json missing');
+  } else {
+    let manifest;
+    try {
+      manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+    } catch (error) {
+      errors.push(`manifest.json is not valid JSON: ${error.message}`);
+    }
+    if (manifest) {
+      for (const slug of HEADING_SLUGS) {
+        for (const ink of ['light', 'dark']) {
+          for (const scale of ['1', '2']) {
+            const png = `assets/word/${ink}/${slug}@${scale}x.png`;
+            if (!existsSync(join(DIST, png))) errors.push(`${png} missing from dist`);
+            const dims = manifest[slug]?.[ink]?.[scale];
+            if (!Array.isArray(dims) || dims.length !== 2) {
+              errors.push(`manifest lacks ${slug}/${ink}/${scale} dimensions`);
+            }
+          }
+        }
+      }
+    }
+  }
+  const writingPage = join(DIST, 'writing/index.html');
+  if (!existsSync(writingPage)) {
+    errors.push('writing/index.html missing');
+  } else {
+    const html = readFileSync(writingPage, 'utf8');
+    const img = html.match(/<img[^>]*alt="Writing"[^>]*>/)?.[0] ?? '';
+    if (!img) errors.push('no heading <img alt="Writing"> on writing/index.html');
+    if (img && !/width=/.test(img)) errors.push('heading <img> has no width attribute');
+    if (img && !/height=/.test(img)) errors.push('heading <img> has no height attribute');
+  }
+  probe('heading-rasters', errors.length === 0, errors.join('; '));
 }
 
 // --- probe 9: sitemap lists the four roots ----------------------------------

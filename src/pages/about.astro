@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import HeadingWord from '../components/HeadingWord.astro';
 ---
 
 <BaseLayout
@@ -7,7 +8,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   description="About gonzalez — what this garden is and what's in it."
 >
   <main class="reading-column">
-    <h1 class="text-3xl font-semibold tracking-tight">About</h1>
+    <h1 class="text-3xl font-semibold tracking-tight"><HeadingWord text="About" /></h1>
     <p class="mt-4">
       I'm <strong>gonzalez</strong>. I work on agentic development tooling —
       the <a href="https://github.com/gonzalez/agent-dev-setup">agent-dev-setup</a>

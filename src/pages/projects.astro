@@ -1,6 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import HeadingWord from '../components/HeadingWord.astro';
 
 const projects = (await getCollection('projects')).sort((a, b) =>
   a.data.name.localeCompare(b.data.name)
@@ -29,7 +30,7 @@ const linksFor = (project: CollectionEntry<'projects'>): ProjectLink[] => [
   description="A text directory of projects: name, one-liner, status, tech, and links."
 >
   <main class="reading-column">
-    <h1 class="text-3xl font-semibold tracking-tight">Projects</h1>
+    <h1 class="text-3xl font-semibold tracking-tight"><HeadingWord text="Projects" /></h1>
     <p class="mt-2 text-ink-muted">
       A text directory — no cards, no screenshots. Name, what it is, where it
       stands, and where to find it.
