@@ -1,11 +1,11 @@
 ---
 id: TASK-5
 title: Content collections + pages + RSS + verify script
-status: In Progress
+status: Done
 assignee:
   - '@agent'
 created_date: '2026-11-06T03:41:00Z'
-updated_date: '2026-11-06T05:02:00Z'
+updated_date: '2026-11-06T05:16:00Z'
 labels: []
 dependencies:
   - TASK-4
