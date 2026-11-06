@@ -42,13 +42,14 @@
  * verify-script contract.
  *
  * Exits 0 with a summary when every probe passes; exits 1 listing each failure.
- * fast-xml-parser rides along with @astrojs/rss (the serializer this feed is
- * produced by), so no extra dependency is introduced.
+ * fast-xml-validator validates the RSS feed without pulling in the deprecated
+ * XMLValidator export from fast-xml-parser.
  */
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, extname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { XMLParser, XMLValidator } from 'fast-xml-parser';
+import { XMLParser } from 'fast-xml-parser';
+import { SyntaxValidator } from 'fast-xml-validator';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = join(ROOT, 'dist');
@@ -151,9 +152,15 @@ if (!existsSync(rssPath)) {
   probe('rss-slugs', false, 'feed missing');
 } else {
   const xml = readFileSync(rssPath, 'utf8');
-  const validity = XMLValidator.validate(xml);
-  const wellFormed = validity === true;
-  probe('rss-xml', wellFormed, wellFormed ? '' : `malformed XML: ${JSON.stringify(validity)}`);
+  let wellFormed = true;
+  let validity = null;
+  try {
+    SyntaxValidator.validate(xml);
+  } catch (err) {
+    wellFormed = false;
+    validity = err;
+  }
+  probe('rss-xml', wellFormed, wellFormed ? '' : `malformed XML: ${validity?.message ?? JSON.stringify(validity)}`);
 
   if (!wellFormed) {
     probe('rss-title', false, 'feed did not parse');
