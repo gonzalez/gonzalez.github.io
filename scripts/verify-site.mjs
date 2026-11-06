@@ -463,6 +463,16 @@ const CODE_FENCE = /^```/m;
     if (img && !/width=/.test(img)) errors.push('heading <img> has no width attribute');
     if (img && !/height=/.test(img)) errors.push('heading <img> has no height attribute');
   }
+  // Narrow viewports: the long "more is coming soon" raster must scale
+  // proportionally instead of being squished by a fixed height (final review).
+  const css = readFileSync(join(ROOT, 'src', 'styles', 'global.css'), 'utf8');
+  const headingRule = css.match(/\.heading-word\s*\{([^}]*)\}/)?.[1] ?? '';
+  if (!/max-width:\s*100%/.test(headingRule)) {
+    errors.push('.heading-word lacks max-width: 100% (squished headline on small screens)');
+  }
+  if (!/height:\s*auto/.test(headingRule)) {
+    errors.push('.heading-word lacks height: auto (non-proportional scaling)');
+  }
   probe('heading-rasters', errors.length === 0, errors.join('; '));
 }
 

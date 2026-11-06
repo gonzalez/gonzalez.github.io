@@ -122,10 +122,13 @@
   display: none;
 }
 /* Heading rasters: scale with the h1's em so the PNG sits at text-3xl size;
-   width/height attrs on the <img> keep the ratio before it loads. */
+   width/height attrs on the <img> keep the ratio before it loads.
+   max-width + auto height let the long "more is coming soon" headline shrink
+   proportionally on narrow viewports instead of being squished. */
 .heading-word {
-  height: 0.95em;
+  height: auto;
   width: auto;
+  max-width: 100%;
 }
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme='light'])) .masthead-word--light,
