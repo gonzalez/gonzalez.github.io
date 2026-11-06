@@ -1,7 +1,7 @@
 ---
 id: TASK-4
 title: Astro garden scaffold + wordmark rasterizer
-status: To Do
+status: In Progress
 assignee:
   - '@agent'
 created_date: '2026-11-06T03:41:00Z'

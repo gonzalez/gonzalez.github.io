@@ -1,0 +1,83 @@
+@import 'tailwindcss';
+
+/*
+ * Garden tokens — palette per docs/plans/2026-11-05-digital-garden-design.md
+ * (operator spec): light #FAFAF8 bg / #242424 text / #737373 secondary /
+ * #E8E8E5 borders / muted slate accent; dark #151515 / #EAEAEA / #999999 /
+ * #303030. System theme detection here; the toggle (Task 3) pins
+ * [data-theme="light"|"dark"] and the choices below defer to it.
+ */
+
+:root {
+  --paper: #FAFAF8;
+  --ink: #242424;
+  --ink-muted: #737373;
+  --edge: #E8E8E5;
+  --accent: #4A5A70; /* muted slate */
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme='light'])) {
+    --paper: #151515;
+    --ink: #EAEAEA;
+    --ink-muted: #999999;
+    --edge: #303030;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-edge: var(--edge);
+  --color-accent: var(--accent);
+
+  --font-sans: 'Inter', 'Geist', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, monospace;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-size: 1.0625rem; /* 17px body per operator spec */
+    line-height: 1.7;
+    margin: 0;
+    min-height: 100dvh;
+  }
+
+  a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--ink-muted);
+    text-underline-offset: 3px;
+  }
+
+  a:hover {
+    text-decoration-color: var(--ink);
+  }
+
+  ::selection {
+    background-color: var(--edge);
+  }
+}
+
+/*
+ * The reading column: 680–740px cap per spec. The responsive padding keeps
+ * gutters alive below 430px viewports (Review Focus #1):
+ * max(0.5rem, calc((100% - 680px)/2)) — the max() floors the negative margin
+ * arithmetic so narrow screens fall back to a 0.5rem gutter, never negative.
+ */
+.reading-column {
+  max-width: 680px;
+  margin-inline: auto;
+  padding-inline: max(0.5rem, calc((100% - 680px)/2));
+}

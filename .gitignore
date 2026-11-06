@@ -3,10 +3,16 @@ node_modules/
 .pnp
 .pnp.js
 
-# next.js
-.next/
-out/
-next-env.d.ts
+# astro
+dist/
+.astro/
+
+# vendored licensed font source — rasterized PNGs only, the OTF is never
+# served or committed (DDC Hardware 45 EULA)
+assets/fonts-src/
+
+# wordmark PNGs — regenerated at build time by scripts/prebuild-wordmark.sh
+public/assets/word/
 
 # production
 build/

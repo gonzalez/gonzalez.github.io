@@ -1,0 +1,23 @@
+---
+// Scaffold home — the real home (Currently Exploring, Selected Projects,
+// Recent Writing) lands with the content collections task.
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// 1x is the natural masthead size; the 2x raster serves retina displays at
+// the same CSS size via the density descriptor (no width math in the HTML).
+const wordmark = '/assets/word/gonzalez@1x.png';
+const wordmark2x = '/assets/word/gonzalez@2x.png';
+---
+
+<BaseLayout title="gonzalez — digital garden">
+  <main class="reading-column">
+    <p>
+      <img
+        src={wordmark}
+        srcset={`${wordmark} 1x, ${wordmark2x} 2x`}
+        alt="gonzalez"
+      />
+    </p>
+    <p>Garden under cultivation — content groundwork lands with the next tasks.</p>
+  </main>
+</BaseLayout>

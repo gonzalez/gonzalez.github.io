@@ -1,25 +1,26 @@
 {
   "name": "gonzalez-github-io",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "type": "module",
   "private": true,
-  "description": "Personal portfolio site for gonzalez.github.io",
+  "description": "gonzalez.github.io — a digital garden (static Astro rebuild)",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "typecheck": "tsc --noEmit",
-    "serve": "npx --yes serve out"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "prebuild": "bash scripts/prebuild-wordmark.sh"
   },
   "dependencies": {
-    "next": "16.3.5",
-    "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "@astrojs/mdx": "^4.3.0",
+    "@astrojs/rss": "^4.0.0",
+    "@astrojs/sitemap": "^3.6.0"
   },
   "devDependencies": {
-    "@types/node": "^24.0.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@astrojs/check": "^0.9.5",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^5.16.0",
+    "tailwindcss": "^4.3.3",
     "typescript": "^5.9.0"
   }
 }
