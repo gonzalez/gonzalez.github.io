@@ -1,11 +1,11 @@
 ---
 id: TASK-4
 title: Astro garden scaffold + wordmark rasterizer
-status: In Progress
+status: Done
 assignee:
   - '@agent'
 created_date: '2026-11-06T03:41:00Z'
-updated_date: '2026-11-06T03:41:00Z'
+updated_date: '2026-11-06T04:20:00Z'
 labels: []
 dependencies: []
 ordinal: 1000
