@@ -40,6 +40,9 @@
  *  17. heading-rasters  — DDC heading PNGs (4 slugs × both inks × 1x+2x) +
  *                        manifest.json ship in dist, and directory headings
  *                        carry width/height attrs (TASK-9, Review Focus 1–3)
+ *  18. nav-inventory    — the site nav carries Home + About only — no
+ *                        Writing/Projects links anywhere (operator directive
+ *                        2026-11-06: those nav entries should not exist)
  *
  * Lighthouse performance is deliberately NOT gated here: per the plan it is
  * the operator's manual review (`npm run preview`/`npx serve dist`), not a
@@ -474,6 +477,35 @@ const CODE_FENCE = /^```/m;
     errors.push('.heading-word lacks height: auto (non-proportional scaling)');
   }
   probe('heading-rasters', errors.length === 0, errors.join('; '));
+}
+
+// --- probe 18: site nav carries Home + About only ----------------------------
+
+{
+  const NAV_FORBIDDEN = ['href="/writing/"', 'href="/projects/"'];
+  const errors = [];
+  if (!existsSync(DIST)) errors.push('dist/ missing — run `npm run build` first');
+  for (const page of allPages) {
+    const file = join(DIST, page);
+    if (!existsSync(file)) {
+      errors.push(`${page} missing`);
+      continue;
+    }
+    const nav = readFileSync(file, 'utf8').match(
+      /<nav[^>]*aria-label="Site"[^>]*>[\s\S]*?<\/nav>/
+    )?.[0];
+    if (!nav) {
+      errors.push(`${page}: site nav missing`);
+      continue;
+    }
+    for (const href of NAV_FORBIDDEN) {
+      if (nav.includes(href)) errors.push(`${page}: nav still carries ${href}`);
+    }
+    if (!nav.includes('href="/"') || !nav.includes('href="/about/"')) {
+      errors.push(`${page}: nav lost Home or About`);
+    }
+  }
+  probe('nav-inventory', errors.length === 0, errors.join('; '));
 }
 
 // --- probe 9: sitemap lists the four roots ----------------------------------
