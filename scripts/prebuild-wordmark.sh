@@ -9,6 +9,14 @@
 #   dark/  — ivory ink #EAEAEA  (light strokes, for the dark theme)
 # The CSS swap (global.css + prefers-color-scheme / [data-theme]) picks one.
 set -euo pipefail
+
+# CI path: when the licensed font isn't vendored but the rendered PNGs are
+# committed (rasterized locally per EULA), skip re-rendering and build.
+if [ ! -f "assets/fonts-src/DDCHardware45-Regular.otf" ] \
+   && ls public/assets/word/*/*.png >/dev/null 2>&1; then
+  echo "wordmark PNGs present (rasterized locally); skipping local render"
+  exit 0
+fi
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 FONT="assets/fonts-src/DDCHardware45-Regular.otf"

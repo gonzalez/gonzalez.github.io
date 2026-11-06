@@ -12,7 +12,7 @@ dist/
 assets/fonts-src/
 
 # wordmark PNGs — regenerated at build time by scripts/prebuild-wordmark.sh
-public/assets/word/
+public
 
 # production
 build/
