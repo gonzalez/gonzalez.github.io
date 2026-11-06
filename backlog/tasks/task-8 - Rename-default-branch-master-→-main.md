@@ -1,11 +1,11 @@
 ---
 id: TASK-8
 title: Rename default branch master → main
-status: To Do
+status: In Progress
 assignee:
   - '@agent'
 created_date: '2026-11-06T04:41:00Z'
-updated_date: '2026-11-06T04:41:00Z'
+updated_date: '2026-11-06T22:48:00Z'
 labels: []
 dependencies:
   - TASK-7

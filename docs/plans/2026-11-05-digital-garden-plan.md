@@ -4,7 +4,7 @@
 
 **Goal:** A rebuild of `gonzalez.github.io` on Astro as a digital garden per the operator's embedded spec: content-as-files writing (maturity model) + a text projects directory + About, DDC Hardware 45 rasterized identity, light/dark, RSS/sitemap/SEO, near-zero client JS, GitHub Pages static hosting, agent-loop built locally.
 
-**Architecture:** Astro static site in `~/agentic-dev/repos/gonzalez.github.io` (default branch `master`), content collections (`src/content/{writing,projects}` + `content.config.ts`), one global stylesheet inlined into each page's `<head>` (garden-sized CSS), DDC wordmark rasterized at build time as PNGs. Loop validation carries the Python rasterizer suite + Astro check + build + site-contract Node script (one command, proven pattern).
+**Architecture:** Astro static site in `~/agentic-dev/repos/gonzalez.github.io` (default branch `main` — renamed from `master` 2026-11-06), content collections (`src/content/{writing,projects}` + `content.config.ts`), one global stylesheet inlined into each page's `<head>` (garden-sized CSS), DDC wordmark rasterized at build time as PNGs. Loop validation carries the Python rasterizer suite + Astro check + build + site-contract Node script (one command, proven pattern).
 
 **Tech Stack:** Astro (^5), TypeScript, Tailwind CSS v4 via `@tailwindcss/vite`, MDX (content collections), `@astrojs/rss`, Pillow (rasterizer), Node verify script, Python unittest.
 
@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- Branch: engine/engine config override `git.base_branch: master`; loop commits only locally on `agent/TASK-n` branches from master (operator merges + pushes; upstream untouched).
+- Branch: the build ran on `agent/TASK-n` branches from the repo default (engine config override `git.base_branch: master` at build time). Default branch renamed to `main` on 2026-11-06 (TASK-8): the override is retired and the platform default `main` applies. Loop commits only locally on `agent/TASK-n` branches (operator merges + pushes; upstream untouched).
 - DDC font: rasterized PNG only; `assets/fonts-src/` gitignored; **no font binaries in `dist/`**; EULA credit verbatim in footer:
   `DDC Hardware 45 © Aaron James Draplin & Brian Bonislawsky via DDC Fonts – www.ddcfonts.com`
 - Copy discipline: every post/project/about statement must derive from real session work (`github.com/gonzalez/agent-dev-setup` public; FinFocus PR rshade/finfocus/pull/2022 public; Datums repo local-only → Datums posts describe it and link to `datums.net` when live — **operator verifies link targets at publish**; seedling drafts exist for genuinely exploratory topics only).

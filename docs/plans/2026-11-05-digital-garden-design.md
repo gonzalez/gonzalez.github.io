@@ -1,8 +1,8 @@
 # Design — gonzalez.github.io digital-garden rebuild (Astro)
 
-**Status**: implemented (2026-11-06) — Astro garden shipped; Next.js sources and deploy workflow retired
+**Status**: implemented (2026-11-06) — Astro garden shipped; Next.js sources and deploy workflow retired; default branch renamed `master` → `main` (TASK-8)
 **Date**: 2026-11-05
-**Repo**: `~/agentic-dev/repos/gonzalez.github.io` (GitHub user-pages site, default branch **master**, origin `gonzalez/gonzalez.github.io`)
+**Repo**: `~/agentic-dev/repos/gonzalez.github.io` (GitHub user-pages site, default branch **main** — renamed from `master` 2026-11-06, origin `gonzalez/gonzalez.github.io`)
 **Supersedes**: the 2026-11-03 "hardware refresh" plan (Next.js incremental) — superseded by the operator's own comprehensive spec, embedded below. The DDC Hardware 45 rasterized-wordmark approach and the EULA constraints carry over; the Next.js implementation tasks are retired.
 
 ## Operator spec (verbatim, 2026-11-05)
@@ -58,10 +58,10 @@
 
 ## Repo realities (verified 2026-11-05)
 
-- Default branch is **`master`** (not `main`) — the loop's engine config must set `git.base_branch: master` per run (a one-line config-override, verified pattern from finfocus runs). Platform follow-up queued: auto-detect `origin/HEAD`.
+- Default branch was **`master`** (not `main`) at build time — the loop's engine config set `git.base_branch: master` per run (a one-line config-override, verified pattern from finfocus runs). **Renamed to `main` 2026-11-06** (TASK-8): the per-run override is retired and the platform default (`main`) now applies.
 - Legacy existed as one commit (static Next.js portfolio, repo-snapshot listing). **Retired by the cleanup commit** (the Next.js sources — `next.config.mjs`, `src/app`, `src/content/site.ts`, `src/content/repos-snapshot.json`, the `next build` deploy workflow — are deleted; the commit message points back at this design).
 - The board task files for the superseded 2026-11-03 plan (TASK-1..3) are archived, not executed.
-- Publish = the operator's explicit `git push` to origin master (Pages serves it). Local-only posture preserved: the loop only ever commits locally. The Next.js deploy workflow is retired with the rest of the Next.js era: nothing rebuilds or deploys automatically, so the operator publishes the locally built `dist/` to the branch Pages serves (branch deploy, not "GitHub Actions").
+- Publish = the operator's explicit `git push` to origin `main` (Pages serves it; the branch was `master` when this design was written — renamed 2026-11-06). Local-only posture preserved: the loop only ever commits locally. The Next.js deploy workflow is retired with the rest of the Next.js era: nothing rebuilds or deploys automatically, so the operator publishes the locally built `dist/` to the branch Pages serves (branch deploy, not "GitHub Actions").
 - Font: `DDCHardware45-Regular.otf` (licensed operator copy) → rasterizer (same `tools/render_wordmark.py` approach as the retired plan: Pillow, deterministic, PNG @1×/2× for the masthead; **never a webfont**). Reuse is additive: the rasterizer manuscript from the retired plan survives into this build (Task 1 below), so no re-typing.
 
 ## Approach (chosen: Astro rebuild)
@@ -89,7 +89,7 @@ Per operator spec: no analytics, comments, DB, auth, CMS; no scroll-triggered an
 
 ## Builder inventory
 
-- Repo path `~/agentic-dev/repos/gonzalez.github.io`, branch `master` (engine config override: `git.base_branch: master`).
+- Repo path `~/agentic-dev/repos/gonzalez.github.io`, branch `main` (default branch renamed from `master` 2026-11-06; the `git.base_branch: master` engine override is retired — the platform default `main` applies).
 - Operator font: `~/Downloads/DDC Hardware 45/OpenType/DDCHardware45-Regular.otf` (vendored under `assets/fonts-src/`, gitignored).
 - License-PDF sits alongside the font (EULA credit required in the footer).
 - Board tasks: retire the February 3 plan (TASK-1..3 archived), then implement per the plan this design births.
