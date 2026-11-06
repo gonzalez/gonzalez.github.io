@@ -1,11 +1,11 @@
 ---
 id: TASK-6
 title: DDC identity + theme mechanics + polish
-status: In Progress
+status: To Do
 assignee:
   - '@agent'
 created_date: '2026-11-06T03:41:00Z'
-updated_date: '2026-11-06T05:16:00Z'
+updated_date: '2026-11-06T06:01:00Z'
 labels: []
 dependencies:
   - TASK-5
