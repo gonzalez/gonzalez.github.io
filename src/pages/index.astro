@@ -6,8 +6,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 // 1x is the natural masthead size; the 2x raster serves retina displays at
 // the same CSS size via the density descriptor (no width math in the HTML).
-const wordmark = '/assets/word/gonzalez@1x.png';
-const wordmark2x = '/assets/word/gonzalez@2x.png';
+// Both ink variants always ship (TASK-3, plan Review Focus #2): the CSS swap
+// (global.css `masthead-word--light/dark`) picks the one matching the active
+// theme — prefers-color-scheme, or the ThemeToggle's pinned [data-theme].
+const wordmarkWidth = 148;
+const wordmarkHeight = 25;
+const mastheadVariants = [
+  {
+    ink: 'light',
+    url: `/assets/word/light/gonzalez@1x.png`,
+    retina: `/assets/word/light/gonzalez@2x.png`,
+  },
+  {
+    ink: 'dark',
+    url: `/assets/word/dark/gonzalez@1x.png`,
+    retina: `/assets/word/dark/gonzalez@2x.png`,
+  },
+] as const;
 
 const notes = (
   await getCollection('writing', (entry) => !entry.data.draft)
@@ -41,12 +56,23 @@ const formatDate = (date: Date) =>
 
 <BaseLayout title="gonzalez — digital garden">
   <main class="reading-column">
-    <p>
-      <img
-        src={wordmark}
-        srcset={`${wordmark} 1x, ${wordmark2x} 2x`}
-        alt="gonzalez"
-      />
+    <p class="masthead">
+      {
+        // Both rasterized ink variants render into the page; the CSS palette
+        // swap (global.css) hides one. A display:none keyword image is
+        // dropped from the accessibility tree, so each variant carries its
+        // own alt text and exactly one is announced per theme.
+        mastheadVariants.map((variant) => (
+          <img
+            class={`masthead-word masthead-word--${variant.ink}`}
+            src={variant.url}
+            srcset={`${variant.url} 1x, ${variant.retina} 2x`}
+            width={wordmarkWidth}
+            height={wordmarkHeight}
+            alt="gonzalez"
+          />
+        ))
+      }
     </p>
     <p>
       A personal digital garden: notes under cultivation, a small directory of

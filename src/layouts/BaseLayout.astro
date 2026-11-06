@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import ThemeToggle from '../components/ThemeToggle.astro';
 
 interface Props {
   title?: string;
@@ -16,22 +17,40 @@ const {
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <!-- Theme pin re-applied before first paint, so a dark-scheme visitor
+         with a stored choice never sees a white flash. Read-only: it only
+         sets [data-theme] when the operator pinned a choice via the toggle. -->
+    <script is:inline>
+      try {
+        var pinnedTheme = localStorage.getItem('theme');
+        if (pinnedTheme === 'light' || pinnedTheme === 'dark') {
+          document.documentElement.setAttribute('data-theme', pinnedTheme);
+        }
+      } catch (e) {
+        /* storage unavailable — system preference applies (global.css) */
+      }
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     <title>{title}</title>
   </head>
   <body>
-    <!-- Minimal shared nav so every note and directory page is reachable;
-         polish (theme toggle, footer) lands with the identity task. -->
     <header class="reading-column">
-      <nav aria-label="Site" class="flex gap-4 py-4 text-sm">
+      <nav aria-label="Site" class="flex flex-wrap items-baseline gap-4 py-4 text-sm">
         <a href="/">Home</a>
         <a href="/writing/">Writing</a>
         <a href="/projects/">Projects</a>
         <a href="/about/">About</a>
+        <ThemeToggle class="ml-auto" />
       </nav>
     </header>
     <slot />
+    <footer class="reading-column">
+      <div class="flex flex-wrap items-baseline gap-4 py-6 text-sm text-ink-muted">
+        <p>DDC Hardware 45 © Aaron James Draplin &amp; Brian Bonislawsky via DDC Fonts – <a href="https://www.ddcfonts.com">www.ddcfonts.com</a></p>
+        <p class="ml-auto"><a href="/rss.xml">RSS</a></p>
+      </div>
+    </footer>
   </body>
 </html>

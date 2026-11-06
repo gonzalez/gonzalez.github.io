@@ -1,6 +1,7 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { slugifyHeading, headingTextFromMarkdown } from '../../lib/heading-slug.mjs';
 
 export async function getStaticPaths() {
   const notes = await getCollection('writing', (entry) => !entry.data.draft);
@@ -16,6 +17,26 @@ interface Props {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
+
+/**
+ * Conditional TOC (plan Review Focus #5): read the note's h2 headings out of
+ * the markdown body and inject the TOC only when there are ≥ 3. The id must
+ * match what rehypeHeadingIds (astro.config.mjs) assigns to the rendered
+ * heading — both call the slugger in src/lib/heading-slug.mjs, so anchors
+ * cannot drift. Fenced-code `## ` lines would also match this regex, but the
+ * garden's notes are authored h2-in-paragraph only; add a smarter scan if a
+ * note ever needs shell-comment headings inside fences.
+ */
+const h2Lines = (entry.body ?? '')
+  .split('\n')
+  .filter((line) => /^##\s+\S/.test(line) && !line.startsWith('###'))
+  .map((line) => {
+    const raw = line.replace(/^##\s+/, '').trim();
+    const text = headingTextFromMarkdown(raw);
+    return { id: slugifyHeading(text), text };
+  })
+  .filter((item) => item.id);
+const toc = h2Lines.length >= 3 ? h2Lines : undefined;
 ---
 
 <ArticleLayout
@@ -25,6 +46,7 @@ const { Content } = await render(entry);
   createdDate={entry.data.createdDate}
   updatedDate={entry.data.updatedDate}
   tags={entry.data.tags}
+  toc={toc}
 >
   <Content />
 </ArticleLayout>

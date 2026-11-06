@@ -1,0 +1,66 @@
+---
+// Theme toggle — vanilla JS only (the plan's Tech Stack: "NO react").
+//
+// Model (matches global.css):
+//   no [data-theme]  → system preference (prefers-color-scheme media query)
+//   [data-theme=light|dark] → the operator's pinned choice, overridable
+// Click pins the opposite of the *effective* theme; the choice persists in
+// localStorage and is re-applied pre-paint by the inline head script in
+// BaseLayout (no flash). To first-time visitors the button reads the system
+// value; nothing here ever animates.
+interface Props {
+  /** Element id, so the inline script and the accessibility label can match. */
+  id?: string;
+  /** Layout hook for the header's flex row (e.g. ml-auto). */
+  class?: string;
+}
+
+const { id = 'theme-toggle', class: className } = Astro.props;
+---
+
+<button
+  type="button"
+  id={id}
+  class={className ? `theme-toggle ${className}` : 'theme-toggle'}
+  data-theme-toggle
+  aria-label="Switch between light and dark theme"
+  title="Switch between light and dark theme"
+>
+  <span class="font-mono" data-theme-toggle-label>theme</span>
+</button>
+
+<script is:inline>
+  (function () {
+    var button = document.getElementById('theme-toggle');
+    var label = button && button.querySelector('[data-theme-toggle-label]');
+    if (!button || !label) return;
+
+    var media = window.matchMedia('(prefers-color-scheme: dark)');
+
+    function effective() {
+      var pinned = document.documentElement.getAttribute('data-theme');
+      if (pinned === 'light' || pinned === 'dark') return pinned;
+      return media.matches ? 'dark' : 'light';
+    }
+
+    function paint() {
+      label.textContent = 'theme: ' + effective();
+    }
+
+    button.addEventListener('click', function () {
+      var next = effective() === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try {
+        localStorage.setItem('theme', next);
+      } catch (error) {
+        /* private mode — the pin just won't persist */
+      }
+      paint();
+    });
+
+    // A system-preference change matters only while nothing is pinned.
+    if (media.addEventListener) media.addEventListener('change', paint);
+
+    paint();
+  })();
+</script>

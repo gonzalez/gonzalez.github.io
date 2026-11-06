@@ -26,6 +26,12 @@ read `dist/` — pages exist, the feed parses, no font binaries ship, slugs stay
 unique. That discipline is the same one described in
 [the agentic outer loop platform](/writing/agentic-outer-loop-platform/) note.
 
+In one command:
+
+```sh
+python3 -m unittest discover tests && npm run check && npm run build && node scripts/verify-site.mjs
+```
+
 Publishing is not a side effect of a green run. It is a deliberate push by me.
 
 ## Status

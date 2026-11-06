@@ -27,6 +27,20 @@
   }
 }
 
+/*
+ * A pinned dark choice must win on a light-system machine. The media query
+ * above cannot cover that case (the system reports light), so the toggle's
+ * [data-theme='dark'] gets the same palette explicitly. Pinned light already
+ * works: the media query excludes [data-theme='light'].
+ */
+:root[data-theme='dark'] {
+  --paper: #151515;
+  --ink: #EAEAEA;
+  --ink-muted: #999999;
+  --edge: #303030;
+  color-scheme: dark;
+}
+
 @theme inline {
   --color-paper: var(--paper);
   --color-ink: var(--ink);
@@ -71,13 +85,150 @@
 }
 
 /*
- * The reading column: 680–740px cap per spec. The responsive padding keeps
- * gutters alive below 430px viewports (Review Focus #1):
- * max(0.5rem, calc((100% - 680px)/2)) — the max() floors the negative margin
- * arithmetic so narrow screens fall back to a 0.5rem gutter, never negative.
+ * The reading column: 680px content cap per spec. Padding percentages resolve
+ * against the containing block, so the full-width box plus this responsive
+ * padding yields exactly a 680px content column on wide screens. Below that
+ * the max() floors the gutter at 0.5rem, so a 320px viewport still gets a
+ * readable 304px line instead of negative/zero width (Review Focus #1).
+ * Do NOT add max-width to this rule: with border-box sizing it would subtract
+ * the same wide-screen padding from a 680px box and collapse the text.
  */
 .reading-column {
-  max-width: 680px;
-  margin-inline: auto;
   padding-inline: max(0.5rem, calc((100% - 680px)/2));
+}
+
+/*
+ * Masthead ink-variant swap (TASK-3, Review Focus #2). Both rasterized PNGs
+ * (light/ #242424, dark/ #EAEAEA) are in the markup; CSS picks one. The
+ * selectors mirror the token cases in :root above — system preference, or
+ * the ThemeToggle's pinned [data-theme] — so text tokens and the masthead
+ * ink can never disagree.
+ */
+.masthead {
+  margin: 1rem 0 0;
+}
+.masthead-word {
+  display: block;
+  height: auto;
+}
+/* Default: light ink on the light paper — also the safe fallback for browsers
+   with no prefers-color-scheme support (they keep the light token palette). */
+.masthead-word--light {
+  display: block;
+}
+.masthead-word--dark {
+  display: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme='light'])) .masthead-word--light {
+    display: none;
+  }
+  :root:where(:not([data-theme='light'])) .masthead-word--dark {
+    display: block;
+  }
+}
+[data-theme='dark'] .masthead-word--light {
+  display: none;
+}
+[data-theme='dark'] .masthead-word--dark {
+  display: block;
+}
+
+/*
+ * Theme toggle — a quiet mono control that inherits the link ink.
+ */
+.theme-toggle {
+  margin-left: auto;
+  border: 1px solid var(--edge);
+  border-radius: 4px;
+  padding: 0.1rem 0.5rem;
+  background: none;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+.theme-toggle:hover {
+  border-color: var(--ink-muted);
+  color: var(--ink);
+}
+
+/*
+ * Syntax highlighting — Shiki emits light token colors resolved inline plus
+ * the dark palette as `--shiki-dark` CSS variables (astro.config.mjs
+ * shikiConfig.themes). Dark override flips only the `color` palette; the
+ * pre background stays a token so code blocks sit in the paper, everywhere.
+ */
+pre.astro-code,
+.astro-code {
+  margin: 1.5rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--edge);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.7;
+  overflow-x: auto;
+}
+/* Token-aware override of Shiki's inline theme background: the block sits in
+   the paper palette (the var is theme-aware) rather than GitHub's editor
+   white. The `[style]` bump wins specificity over the inline style. */
+.astro-code[style] {
+  background-color: var(--edge) !important;
+  color: var(--ink); /* fallback while the light tokens resolve inline */
+}
+/* Dark palette: Shiki parked every dark token color in --shiki-dark of each
+   span; both unpinned (system dark) and pinned-dark users flip to it. */
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme='light'])) .astro-code,
+  :root:where(:not([data-theme='light'])) .astro-code span {
+    color: var(--shiki-dark) !important;
+  }
+}
+[data-theme='dark'] .astro-code,
+[data-theme='dark'] .astro-code span {
+  color: var(--shiki-dark) !important;
+}
+
+/*
+ * Reading progress (optional per spec): a 2px accent line pinned to the
+ * viewport top on article pages, driven by a tiny inline script (no lib).
+ * prefers-reduced-motion gets the bar hidden outright — motion-free is
+ * motion-free, and the script also stands down between updates.
+ */
+.reading-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 2px;
+  z-index: 50;
+  pointer-events: none;
+}
+.reading-progress-bar {
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background-color: var(--accent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reading-progress {
+    display: none;
+  }
+}
+
+/*
+ * TOC (conditional — injected only for notes with ≥ 3 h2 headings): a mono
+ * list reading like a file's section index, not a SaaS card.
+ */
+.toc {
+  margin-block: 1.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--edge);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}
+.toc-label {
+  margin: 0 0 0.5rem;
+  color: var(--ink-muted);
 }

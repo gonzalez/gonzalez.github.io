@@ -1,0 +1,28 @@
+---
+// Table of contents for long notes (TASK-3, plan Review Focus #5): injected
+// only when a note carries ≥ 3 h2 headings — the caller ([...slug].astro)
+// counts them and decides, so short notes never grow a TOC.
+interface TocItem {
+  id: string;
+  text: string;
+}
+
+interface Props {
+  items: TocItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="toc" data-toc aria-label="On this page">
+  <p class="toc-label font-mono text-sm">on this page</p>
+  <ul>
+    {
+      items.map((item) => (
+        <li>
+          <a href={`#${item.id}`}>{item.text}</a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

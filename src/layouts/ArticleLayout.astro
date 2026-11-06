@@ -1,5 +1,11 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import Toc from '../components/Toc.astro';
+
+interface TocItem {
+  id: string;
+  text: string;
+}
 
 interface Props {
   title: string;
@@ -8,9 +14,11 @@ interface Props {
   createdDate: Date;
   updatedDate?: Date;
   tags?: string[];
+  /** Present only when the note has ≥ 3 h2s (computed by the slug page). */
+  toc?: TocItem[];
 }
 
-const { title, description, maturity, createdDate, updatedDate, tags = [] } =
+const { title, description, maturity, createdDate, updatedDate, tags = [], toc } =
   Astro.props;
 
 // UTC keeps the printed date identical to the frontmatter date regardless of
@@ -27,6 +35,14 @@ const formatDate = (date: Date) =>
 
 <BaseLayout title={`${title} — gonzalez`} description={description}>
   <main class="reading-column">
+    <!-- Optional reading progress (spec: "optional reading progress on long
+         articles", Task 3). Vanilla inline script only; global.css hides the
+         bar outright under prefers-reduced-motion and the script stands
+         down with it. Lighthouse review stays the operator's manual check
+         (plan Task 3: not gated in verify). -->
+    <div class="reading-progress" aria-hidden="true">
+      <div class="reading-progress-bar" data-reading-progress-bar></div>
+    </div>
     <article>
       <header>
         <p class="font-mono text-sm text-ink-muted">
@@ -53,9 +69,43 @@ const formatDate = (date: Date) =>
         <h1 class="mt-2 text-3xl font-semibold tracking-tight">{title}</h1>
         <p class="mt-2 text-ink-muted">{description}</p>
       </header>
+      {toc && toc.length >= 3 && <Toc items={toc} />}
       <div class="mt-6">
         <slot />
       </div>
     </article>
   </main>
+
+  <script is:inline>
+    (function () {
+      // Honor prefers-reduced-motion: the CSS already hides the bar; skip
+      // the scroll wiring entirely so the page never touches transform on
+      // scroll for those readers.
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var bar = document.querySelector('[data-reading-progress-bar]');
+      var article = document.querySelector('article');
+      if (!bar || !article) return;
+
+      var ticking = false;
+      var update = function () {
+        ticking = false;
+        var rect = article.getBoundingClientRect();
+        var start = rect.top + window.scrollY;
+        var end = start + rect.height - window.innerHeight;
+        var span = Math.max(end - start, 1);
+        var progress = (window.scrollY - start) / span;
+        progress = Math.max(0, Math.min(1, progress));
+        bar.style.transform = 'scaleX(' + progress + ')';
+      };
+      var schedule = function () {
+        if (!ticking) {
+          ticking = true;
+          window.requestAnimationFrame(update);
+        }
+      };
+      window.addEventListener('scroll', schedule, { passive: true });
+      window.addEventListener('resize', schedule);
+      update();
+    })();
+  </script>
 </BaseLayout>

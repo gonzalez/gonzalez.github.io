@@ -20,6 +20,26 @@
  *   9. sitemap-roots   — the sitemap lists all four roots
  *  10. home-entries    — home lists at least three real post/project entries
  *                        (TASK-5 acceptance: seeded home, no thin landing)
+ *  11. wordmark-variants — BOTH rasterized masthead inks ship in dist
+ *                        (light/ #242424 + dark/ #EAEAEA @1x+@2x) and home
+ *                        references both (TASK-3, plan Review Focus #2)
+ *  12. footer-eula     — the footer carries the DDC EULA credit line verbatim
+ *                        (TASK-3; checked on home, directories, and notes)
+ *  13. theme-toggle    — a [data-theme-toggle] control exists on every page
+ *                        (TASK-3: system detection + vanilla-JS toggle)
+ *  14. reading-clamp   — global.css caps the reading column with the
+ *                        max(0.5rem, calc((100% - 680px)/2)) clamp and keeps
+ *                        the column class in use (TASK-3, Review Focus #1);
+ *                        <430px behavior stays a manual visual check
+ *  15. toc-conditional — note pages with ≥ 3 h2s carry a [data-toc] nav;
+ *                        shorter notes must NOT (TASK-3, Review Focus #5)
+ *  16. syntax-highlight— notes that contain fenced code blocks ship them
+ *                        highlighted (`astro-code` class present in dist)
+ *                        (TASK-3)
+ *
+ * Lighthouse performance is deliberately NOT gated here: per the plan it is
+ * the operator's manual review (`npm run preview`/`npx serve dist`), not a
+ * verify-script contract.
  *
  * Exits 0 with a summary when every probe passes; exits 1 listing each failure.
  * fast-xml-parser rides along with @astrojs/rss (the serializer this feed is
@@ -223,6 +243,163 @@ if (!existsSync(homePath)) {
       ? `home lists ${count} post/project entr${count === 1 ? 'y' : 'ies'}, need ≥ 3`
       : 'dist/index.html missing'
   );
+}
+
+// --- probe 11: both wordmark ink variants ship -------------------------------
+//
+// TASK-3 (Review Focus #2): a rasterized light-ink masthead on a dark page is
+// invisible, so dist must carry both variants and the home page must show
+// both of them to the CSS palette swap.
+{
+  const expected = [
+    'assets/word/light/gonzalez@1x.png',
+    'assets/word/light/gonzalez@2x.png',
+    'assets/word/dark/gonzalez@1x.png',
+    'assets/word/dark/gonzalez@2x.png',
+  ];
+  const missing = existsSync(DIST) ? expected.filter((p) => !existsSync(join(DIST, p))) : expected;
+  const home = existsSync(homePath) ? readFileSync(homePath, 'utf8') : '';
+  const unreferenced = existsSync(homePath)
+    ? ['/assets/word/light/gonzalez@1x.png', '/assets/word/dark/gonzalez@1x.png'].filter(
+        (reference) => !home.includes(reference)
+      )
+    : ['/assets/word/* (dist/index.html missing)'];
+  probe(
+    'wordmark-variants',
+    missing.length === 0 && unreferenced.length === 0,
+    [
+      missing.length ? `not in dist: ${missing.join(', ')}` : '',
+      unreferenced.length ? `not referenced by home: ${unreferenced.join(', ')}` : '',
+    ]
+      .filter(Boolean)
+      .join('; ')
+  );
+}
+
+// --- probe 12: footer carries the EULA credit verbatim -----------------------
+//
+// The exact line pinned by the plan's Global Constraints. HTML normalization
+// only — decode entities, strip tags, collapse whitespace — so the probe
+// reads the browser-facing text, which is what the EULA requires.
+const EULA_CREDIT =
+  'DDC Hardware 45 © Aaron James Draplin & Brian Bonislawsky via DDC Fonts – www.ddcfonts.com';
+
+const decodeHtml = (html) =>
+  html
+    .replace(/&amp;/g, '&')
+    .replace(/&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ');
+
+const allPages = [
+  'index.html',
+  'writing/index.html',
+  'projects/index.html',
+  'about/index.html',
+  ...publishedNotes.map((n) => `writing/${n.slug.toLowerCase()}/index.html`),
+];
+{
+  const withPages = existsSync(DIST) ? allPages : [];
+  const missingCredit = withPages.filter((page) => {
+    const file = join(DIST, page);
+    return !existsSync(file) || !decodeHtml(readFileSync(file, 'utf8')).includes(EULA_CREDIT);
+  });
+  probe(
+    'footer-eula',
+    existsSync(DIST) && missingCredit.length === 0,
+    existsSync(DIST) && missingCredit.length > 0
+      ? `missing the verbatim credit on: ${missingCredit.join(', ')}`
+      : existsSync(DIST)
+        ? ''
+        : 'dist/ missing — run `npm run build` first'
+  );
+}
+
+// --- probe 13: theme toggle present (vanilla JS control) ---------------------
+
+{
+  const withoutToggle = existsSync(DIST)
+    ? allPages.filter((page) => {
+        const file = join(DIST, page);
+        return !existsSync(file) || !readFileSync(file, 'utf8').includes('data-theme-toggle');
+      })
+    : allPages;
+  probe(
+    'theme-toggle',
+    existsSync(DIST) && withoutToggle.length === 0,
+    existsSync(DIST) && withoutToggle.length > 0
+      ? `no [data-theme-toggle] on: ${withoutToggle.join(', ')}`
+      : existsSync(DIST)
+        ? ''
+        : 'dist/ missing'
+  );
+}
+
+// --- probe 14: reading-column clamp pinned at the source --------------------
+//
+// Inline stylesheets are minified in dist, so the exact clamp formula is
+// asserted in src/styles/global.css (Task 1's planned contract). The <430px
+// visual behavior itself stays the operator's manual review — no browser in
+// this loop, per plan Task 3.
+{
+  const cssPath = join(ROOT, 'src', 'styles', 'global.css');
+  const css = existsSync(cssPath) ? readFileSync(cssPath, 'utf8') : '';
+  const hasClamp = css.includes('max(0.5rem, calc((100% - 680px)/2))');
+  const hasColumn = /^\.reading-column \{/m.test(css);
+  probe(
+    'reading-clamp',
+    hasClamp && hasColumn,
+    hasColumn
+      ? hasClamp
+        ? ''
+        : 'global.css lost the max(0.5rem, calc((100% - 680px)/2)) reading-column clamp'
+      : 'global.css has no .reading-column rule'
+  );
+}
+
+// --- probe 15: TOC only on notes with >= 3 h2s (TASK-3, Review Focus #5) ----
+//
+// Count the h2s actually rendered into each dist note page (not source
+// greps — walls of truth stay in the browser-facing artifact) and require
+// [data-toc] exactly when there are three or more.
+{
+  const errors = [];
+  if (!existsSync(DIST)) errors.push('dist/ missing — run `npm run build` first');
+  for (const n of publishedNotes) {
+    const page = `writing/${n.slug.toLowerCase()}/index.html`;
+    const file = join(DIST, page);
+    if (!existsSync(file)) {
+      errors.push(`${page} missing`);
+      continue;
+    }
+    const html = readFileSync(file, 'utf8');
+    const h2Count = (html.match(/<h2[\s>]/g) ?? []).length;
+    const hasToc = html.includes('data-toc');
+    if (h2Count >= 3 && !hasToc) errors.push(`${page}: ${h2Count} h2s but no TOC`);
+    if (h2Count < 3 && hasToc) errors.push(`${page}: only ${h2Count} h2(s) but a TOC is present`);
+  }
+  probe('toc-conditional', errors.length === 0, errors.join('; '));
+}
+
+// --- probe 16: fenced code blocks ship syntax-highlighted (Shiki) ------------
+
+const CODE_FENCE = /^```/m;
+{
+  const errors = [];
+  if (!existsSync(DIST)) errors.push('dist/ missing — run `npm run build` first');
+  for (const n of writingNotes) {
+    const source = join(WRITING_DIR, n.file);
+    if (!CODE_FENCE.test(readFileSync(source, 'utf8'))) continue;
+    const page = `writing/${n.slug.toLowerCase()}/index.html`;
+    const file = join(DIST, page);
+    if (!existsSync(file) || !readFileSync(file, 'utf8').includes('astro-code')) {
+      errors.push(`${page}: fenced code not highlighted (no astro-code block)`);
+    }
+  }
+  probe('syntax-highlight', errors.length === 0, errors.join('; '));
 }
 
 // --- probe 9: sitemap lists the four roots ----------------------------------
