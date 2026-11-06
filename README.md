@@ -188,7 +188,7 @@ The operator's flow:
    `node scripts/verify-site.mjs`).
 2. `npm run preview` and read the built site once more.
 3. Publish the built `dist/` to the branch GitHub Pages is configured to
-   serve, then push `master` to origin for the record.
+   serve, then push `main` — that push publishes the site.
 
 Two consequences of the manual posture are worth knowing:
 
