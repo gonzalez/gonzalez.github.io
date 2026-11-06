@@ -15,11 +15,12 @@
  *                        (DDC EULA: rasterized PNGs only, never font binaries)
  *   7. slug-uniqueness — no duplicate slugs across the writing and projects
  *                        collections (Review Focus #4: /writing/<slug> collision)
- *   8. home-markers    — the home page carries the three garden markers
- *                        (Currently Exploring / Selected Projects / Recent Writing)
+ *   8. home-holding    — home carries the DDC "more is coming soon" headline
+ *                        and the short holding line (TASK-9: garden sections
+ *                        are gone from the front door, pages stay live)
  *   9. sitemap-roots   — the sitemap lists all four roots
- *  10. home-entries    — home lists at least three real post/project entries
- *                        (TASK-5 acceptance: seeded home, no thin landing)
+ *  10. home-no-entries — home lists no post/project entries or garden
+ *                        sections (TASK-9: it is a holding page, not a landing)
  *  11. wordmark-variants — BOTH rasterized masthead inks ship in dist
  *                        (light/ #242424 + dark/ #EAEAEA @1x+@2x) and home
  *                        references both (TASK-3, plan Review Focus #2)
@@ -61,7 +62,6 @@ const PROJECTS_DIR = join(ROOT, 'src', 'content', 'projects');
 const SITE = 'https://gonzalez.github.io';
 
 const FONT_EXTENSIONS = new Set(['.otf', '.ttf', '.woff', '.woff2', '.eot']);
-const HOME_MARKERS = ['Currently Exploring', 'Selected Projects', 'Recent Writing'];
 const SITEMAP_ROOTS = [`${SITE}/`, `${SITE}/writing/`, `${SITE}/projects/`, `${SITE}/about/`];
 
 const failures = [];
@@ -224,33 +224,40 @@ if (!existsSync(DIST)) {
   );
 }
 
-// --- probe 8: home garden markers -------------------------------------------
+// --- probe 8: home is the holding page (TASK-9) ------------------------------
 
 const homePath = join(DIST, 'index.html');
-if (!existsSync(homePath)) {
-  probe('home-markers', false, 'dist/index.html missing');
-} else {
-  const home = readFileSync(homePath, 'utf8');
-  const missing = HOME_MARKERS.filter((marker) => !home.includes(marker));
+{
+  const home = existsSync(homePath) ? readFileSync(homePath, 'utf8') : '';
+  const missing = [
+    ['the coming-soon headline', /<img[^>]*alt="more is coming soon"[^>]*>/],
+    ['the holding copy', /Glad you/],
+  ]
+    .filter(([, pattern]) => !pattern.test(home))
+    .map(([label]) => label);
   probe(
-    'home-markers',
-    missing.length === 0,
-    missing.length ? `home is missing: ${missing.join(', ')}` : ''
+    'home-holding',
+    existsSync(homePath) && missing.length === 0,
+    existsSync(homePath) ? `home is missing: ${missing.join(', ')}` : 'dist/index.html missing'
   );
 }
 
-// --- probe 10: home carries at least three seeded entries -------------------
+// --- probe 10: home lists no garden entries or sections (TASK-9) -------------
 
-// Each project/note row on the home page is tagged `data-home-entry`; the
-// probe counts them so "three real entries" is a contract, not a hope.
+// A holding page has no post/project rows and no garden-section headings.
 {
   const home = existsSync(homePath) ? readFileSync(homePath, 'utf8') : '';
-  const count = (home.match(/data-home-entry=/g) ?? []).length;
+  const present = [
+    'data-home-entry=',
+    'Currently Exploring',
+    'Selected Projects',
+    'Recent Writing',
+  ].filter((marker) => home.includes(marker));
   probe(
-    'home-entries',
-    count >= 3,
+    'home-no-entries',
+    existsSync(homePath) && present.length === 0,
     existsSync(homePath)
-      ? `home lists ${count} post/project entr${count === 1 ? 'y' : 'ies'}, need ≥ 3`
+      ? `home still carries: ${present.join(', ')}`
       : 'dist/index.html missing'
   );
 }
