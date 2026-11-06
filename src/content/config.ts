@@ -17,6 +17,10 @@ const writing = defineCollection({
 });
 
 // Projects as a text directory: name, one-liner, tech, status, GitHub link.
+// `github` is optional: some projects have no public repository
+// yet — the plan's copy discipline forbids inventing link targets for them.
+// `links` carries extra public URLs; `writeUp`
+// points at the garden note (or article) about the project.
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.json', base: './src/content/projects' }),
   schema: z.object({
@@ -24,8 +28,11 @@ const projects = defineCollection({
     description: z.string(),
     technologies: z.array(z.string()).default([]),
     status: z.string(),
-    github: z.string().url(),
+    github: z.string().url().optional(),
     writeUp: z.string().optional(),
+    links: z
+      .array(z.object({ label: z.string(), href: z.string().url() }))
+      .optional(),
   }),
 });
 

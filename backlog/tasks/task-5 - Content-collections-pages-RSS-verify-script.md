@@ -1,11 +1,11 @@
 ---
 id: TASK-5
 title: Content collections + pages + RSS + verify script
-status: In Progress
+status: To Do
 assignee:
   - '@agent'
 created_date: '2026-11-06T03:41:00Z'
-updated_date: '2026-11-06T04:32:00Z'
+updated_date: '2026-11-06T04:58:00Z'
 labels: []
 dependencies:
   - TASK-4
@@ -15,7 +15,7 @@ ordinal: 2000
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
-Task 2 of the plan: writing index + note pages + projects directory + about + home (Currently Exploring, Selected Projects, Recent Writing) per spec IA; RSS via @astrojs/rss; scripts/verify-site.mjs contract probes (dist pages exist, rss parses as XML with title+pubDate, no font binaries in dist, duplicate-slug failure, home garden markers). Seed content REAL per ledger: agentic outer loop post (links to github.com/gonzalez/agent-dev-setup), Datums web presence rebuild post (no live external link claims — describes the work), FinFocus robust-median contribution (public: https://github.com/rshade/finfocus/pull/2022 and #1863), plus project entries for the same three (status/tech from real repos). No invented claims anywhere.
+Task 2 of the plan (scope narrowed by operator 2026-11-06: agents do not work on or read datums/finfocus material): writing index + note pages + projects directory + about + home (Currently Exploring, Selected Projects, Recent Writing) per spec IA; RSS via @astrojs/rss; scripts/verify-site.mjs contract probes; seed content limited to the operator's OWN work on github.com/gonzalez/* (the agentic outer loop platform). Previously drafted datums/finfocus posts and project entries scrubbed from content.
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria

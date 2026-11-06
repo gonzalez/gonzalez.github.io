@@ -1,0 +1,8 @@
+{
+  "name": "agent-dev-setup",
+  "description": "The outer-loop platform for my agentic development work: environment setup, validation, and conventions that run around a coding agent.",
+  "technologies": ["Agentic development", "Developer tooling"],
+  "status": "Active",
+  "github": "https://github.com/gonzalez/agent-dev-setup",
+  "writeUp": "/writing/agentic-outer-loop-platform/"
+}

@@ -1,0 +1,61 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  maturity: 'seedling' | 'growing' | 'evergreen';
+  createdDate: Date;
+  updatedDate?: Date;
+  tags?: string[];
+}
+
+const { title, description, maturity, createdDate, updatedDate, tags = [] } =
+  Astro.props;
+
+// UTC keeps the printed date identical to the frontmatter date regardless of
+// the build machine's timezone (2026-11-05 must not render as 11-04 west of
+// Greenwich).
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
+---
+
+<BaseLayout title={`${title} — gonzalez`} description={description}>
+  <main class="reading-column">
+    <article>
+      <header>
+        <p class="font-mono text-sm text-ink-muted">
+          <span data-maturity={maturity}>{maturity}</span>
+          {' · '}
+          <time datetime={createdDate.toISOString()}>{formatDate(createdDate)}</time>
+          {
+            updatedDate && (
+              <>
+                {' · updated '}
+                <time datetime={updatedDate.toISOString()}>{formatDate(updatedDate)}</time>
+              </>
+            )
+          }
+          {
+            tags.length > 0 && (
+              <>
+                {' · '}
+                {tags.join(', ')}
+              </>
+            )
+          }
+        </p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight">{title}</h1>
+        <p class="mt-2 text-ink-muted">{description}</p>
+      </header>
+      <div class="mt-6">
+        <slot />
+      </div>
+    </article>
+  </main>
+</BaseLayout>

@@ -22,6 +22,16 @@ const {
     <title>{title}</title>
   </head>
   <body>
+    <!-- Minimal shared nav so every note and directory page is reachable;
+         polish (theme toggle, footer) lands with the identity task. -->
+    <header class="reading-column">
+      <nav aria-label="Site" class="flex gap-4 py-4 text-sm">
+        <a href="/">Home</a>
+        <a href="/writing/">Writing</a>
+        <a href="/projects/">Projects</a>
+        <a href="/about/">About</a>
+      </nav>
+    </header>
     <slot />
   </body>
 </html>

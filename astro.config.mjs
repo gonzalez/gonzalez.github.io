@@ -17,6 +17,9 @@ export default defineConfig({
     inlineStylesheets: 'always',
   },
   vite: {
-    plugins: [tailwindcss()],
+    // Type-skew: @tailwindcss/vite targets a newer vite plugin-hook type
+    // than the vite copy astro bundles; the runtime contract is compatible.
+    // Cast keeps `npm run check` green until the skew resolves upstream.
+    plugins: [/** @type {any} */ (tailwindcss())],
   },
 });

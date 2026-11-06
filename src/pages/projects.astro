@@ -1,0 +1,61 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const projects = (await getCollection('projects')).sort((a, b) =>
+  a.data.name.localeCompare(b.data.name)
+);
+
+interface ProjectLink {
+  label: string;
+  href: string;
+}
+
+// GitHub (when public), the garden write-up, then any extra public links
+
+const linksFor = (project: CollectionEntry<'projects'>): ProjectLink[] => [
+  ...(project.data.github
+    ? [{ label: 'GitHub', href: project.data.github }]
+    : []),
+  ...(project.data.writeUp
+    ? [{ label: 'Write-up', href: project.data.writeUp }]
+    : []),
+  ...(project.data.links ?? []),
+];
+---
+
+<BaseLayout
+  title="Projects — gonzalez"
+  description="A text directory of projects: name, one-liner, status, tech, and links."
+>
+  <main class="reading-column">
+    <h1 class="text-3xl font-semibold tracking-tight">Projects</h1>
+    <p class="mt-2 text-ink-muted">
+      A text directory — no cards, no screenshots. Name, what it is, where it
+      stands, and where to find it.
+    </p>
+    <ul class="mt-8 space-y-8">
+      {
+        projects.map((project) => (
+          <li>
+            <h2 class="text-xl font-semibold">{project.data.name}</h2>
+            <p class="mt-1 text-ink-muted">{project.data.description}</p>
+            <p class="mt-1 font-mono text-sm text-ink-muted">
+              status: {project.data.status}
+              {project.data.technologies.length > 0 && (
+                <> · tech: {project.data.technologies.join(', ')}</>
+              )}
+            </p>
+            <p class="mt-1 text-sm">
+              {linksFor(project).map((link) => (
+                <a href={link.href} class="mr-3">
+                  {link.label}
+                </a>
+              ))}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+</BaseLayout>
