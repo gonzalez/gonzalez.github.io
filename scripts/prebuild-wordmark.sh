@@ -45,4 +45,9 @@ for heading in "${HEADINGS[@]}"; do
   python3 scripts/render_wordmark.py --font "$FONT" --out "$OUT/dark" --text "$heading" --ink EAEAEA --height 30
 done
 
+# TASK-11: home headline in the astro-inspired accent inks (design: accent
+# infusion). Only "more is coming soon" carries an accent variant.
+python3 scripts/render_wordmark.py --font "$FONT" --out "$OUT/accent-light" --text "more is coming soon" --ink 7C5CFF --height 30
+python3 scripts/render_wordmark.py --font "$FONT" --out "$OUT/accent-dark" --text "more is coming soon" --ink A78BFA --height 30
+
 python3 scripts/build_headings_manifest.py

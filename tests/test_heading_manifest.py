@@ -37,6 +37,13 @@ class BuildManifestTest(unittest.TestCase):
         write_manifest(manifest, out)
         self.assertEqual(json.loads(out.read_text()), manifest)
 
+    def test_dynamic_ink_dirs(self):
+        self._png(self.word / "accent-light", "writing", 40, 12, 80, 24)
+        self._png(self.word / "accent-dark", "writing", 40, 12, 80, 24)
+        manifest = build_manifest(self.word)
+        self.assertEqual(manifest["writing"]["accent-light"]["1"], [40, 12])
+        self.assertEqual(manifest["writing"]["accent-dark"]["2"], [80, 24])
+
 
 if __name__ == "__main__":
     unittest.main()

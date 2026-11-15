@@ -23,16 +23,21 @@ from PIL import Image
 
 DEFAULT_WORD_DIR = Path("public/assets/word")
 DEFAULT_OUT = Path("public/assets/word/manifest.json")
-INK_DIRS = ("light", "dark")
 PNG_NAME = re.compile(r"^(.+)@(\d+)x\.png$")
 
 
 def build_manifest(word_dir: str | Path) -> dict:
-    """Slug → ink → scale-string → [png width, png height]."""
+    """Slug → ink → scale-string → [png width, png height].
+
+    Ink = any subdirectory of ``word_dir`` (``light``, ``dark``, or any
+    accent/special ink dir added later); the manifest never hardcodes names,
+    so a new ink dir cannot silently vanish.
+    """
     word = Path(word_dir)
     found: dict[str, dict[str, dict[str, list[int]]]] = {}
-    for ink in INK_DIRS:
-        for png in sorted((word / ink).glob("*.png")):
+    for ink_dir in sorted(p for p in word.iterdir() if p.is_dir()):
+        ink = ink_dir.name
+        for png in sorted(ink_dir.glob("*.png")):
             match = PNG_NAME.match(png.name)
             if not match:
                 continue

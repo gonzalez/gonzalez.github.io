@@ -436,11 +436,12 @@ const CODE_FENCE = /^```/m;
   const HEADING_SLUGS = ['more-is-coming-soon', 'writing', 'projects', 'about', 'experiments'];
   const errors = [];
   const manifestPath = join(DIST, 'assets/word/manifest.json');
+  let manifest = null;
   if (!existsSync(DIST)) errors.push('dist/ missing — run `npm run build` first');
   if (!existsSync(manifestPath)) {
     errors.push('dist/assets/word/manifest.json missing');
   } else {
-    let manifest;
+    manifest = null;
     try {
       manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
     } catch (error) {
@@ -458,6 +459,17 @@ const CODE_FENCE = /^```/m;
             }
           }
         }
+      }
+    }
+  }
+  // TASK-11: accent inks for the home headline (astro.build-inspired).
+  for (const ink of ['accent-light', 'accent-dark']) {
+    for (const scale of ['1', '2']) {
+      const png = `assets/word/${ink}/more-is-coming-soon@${scale}x.png`;
+      if (!existsSync(join(DIST, png))) errors.push(`${png} missing from dist`);
+      const dims = manifest?.['more-is-coming-soon']?.[ink]?.[scale];
+      if (!Array.isArray(dims) || dims.length !== 2) {
+        errors.push(`manifest lacks more-is-coming-soon/${ink}/${scale} dimensions`);
       }
     }
   }
