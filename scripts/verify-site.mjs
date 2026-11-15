@@ -323,6 +323,7 @@ const allPages = [
   'writing/index.html',
   'projects/index.html',
   'about/index.html',
+  'experiments/index.html',
   ...publishedNotes.map((n) => `writing/${n.slug.toLowerCase()}/index.html`),
 ];
 {
@@ -460,15 +461,23 @@ const CODE_FENCE = /^```/m;
       }
     }
   }
-  const writingPage = join(DIST, 'writing/index.html');
-  if (!existsSync(writingPage)) {
-    errors.push('writing/index.html missing');
-  } else {
-    const html = readFileSync(writingPage, 'utf8');
-    const img = html.match(/<img[^>]*alt="Writing"[^>]*>/)?.[0] ?? '';
-    if (!img) errors.push('no heading <img alt="Writing"> on writing/index.html');
-    if (img && !/width=/.test(img)) errors.push('heading <img> has no width attribute');
-    if (img && !/height=/.test(img)) errors.push('heading <img> has no height attribute');
+  // The heading <img> (not the fail-soft <span>) must render on each page
+  // that owns a rasterized heading — with width/height (no layout shift).
+  for (const [page, alt] of [
+    ['writing/index.html', 'Writing'],
+    ['experiments/index.html', 'Experiments'],
+  ]) {
+    const file = join(DIST, page);
+    if (!existsSync(file)) {
+      errors.push(`${page} missing`);
+      continue;
+    }
+    const img = readFileSync(file, 'utf8').match(
+      new RegExp(`<img[^>]*alt="${alt}"[^>]*>`)
+    )?.[0];
+    if (!img) errors.push(`no heading <img alt="${alt}"> on ${page}`);
+    if (img && !/width=/.test(img)) errors.push(`heading <img> on ${page} has no width attribute`);
+    if (img && !/height=/.test(img)) errors.push(`heading <img> on ${page} has no height attribute`);
   }
   // Narrow viewports: the long "more is coming soon" raster must scale
   // proportionally instead of being squished by a fixed height (final review).
