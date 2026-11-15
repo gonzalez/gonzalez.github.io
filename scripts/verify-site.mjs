@@ -473,6 +473,13 @@ const CODE_FENCE = /^```/m;
       }
     }
   }
+  const home = existsSync(homePath) ? readFileSync(homePath, 'utf8') : '';
+  for (const reference of [
+    '/assets/word/accent-light/more-is-coming-soon@1x.png',
+    '/assets/word/accent-dark/more-is-coming-soon@1x.png',
+  ]) {
+    if (home && !home.includes(reference)) errors.push(`home does not reference ${reference}`);
+  }
   // The heading <img> (not the fail-soft <span>) must render on each page
   // that owns a rasterized heading — with width/height (no layout shift).
   for (const [page, alt] of [

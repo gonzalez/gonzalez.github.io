@@ -13,7 +13,8 @@
   --ink: #242424;
   --ink-muted: #737373;
   --edge: #E8E8E5;
-  --accent: #4A5A70; /* muted slate */
+  --accent: #7c5cff; /* astro-inspired violet (design: accent infusion) */
+  --accent-soft: rgba(124, 92, 255, 0.14);
   color-scheme: light;
 }
 
@@ -23,6 +24,8 @@
     --ink: #EAEAEA;
     --ink-muted: #999999;
     --edge: #303030;
+    --accent: #a78bfa;
+    --accent-soft: rgba(167, 139, 250, 0.16);
     color-scheme: dark;
   }
 }
@@ -38,6 +41,8 @@
   --ink: #EAEAEA;
   --ink-muted: #999999;
   --edge: #303030;
+  --accent: #a78bfa;
+  --accent-soft: rgba(167, 139, 250, 0.16);
   color-scheme: dark;
 }
 
@@ -69,18 +74,18 @@
   }
 
   a {
-    color: var(--ink);
+    color: var(--accent);
     text-decoration: underline;
-    text-decoration-color: var(--ink-muted);
+    text-decoration-color: var(--accent-soft);
     text-underline-offset: 3px;
   }
 
   a:hover {
-    text-decoration-color: var(--ink);
+    text-decoration-color: var(--accent);
   }
 
   ::selection {
-    background-color: var(--edge);
+    background-color: var(--accent-soft);
   }
 }
 
@@ -114,11 +119,13 @@
 /* Default: light ink on the light paper — also the safe fallback for browsers
    with no prefers-color-scheme support (they keep the light token palette). */
 .masthead-word--light,
-.heading-word--light {
+.heading-word--light,
+.heading-word--accent-light {
   display: block;
 }
 .masthead-word--dark,
-.heading-word--dark {
+.heading-word--dark,
+.heading-word--accent-dark {
   display: none;
 }
 /* Heading rasters: scale with the h1's em so the PNG sits at text-3xl size;
@@ -132,21 +139,68 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme='light'])) .masthead-word--light,
-  :root:where(:not([data-theme='light'])) .heading-word--light {
+  :root:where(:not([data-theme='light'])) .heading-word--light,
+  :root:where(:not([data-theme='light'])) .heading-word--accent-light {
     display: none;
   }
   :root:where(:not([data-theme='light'])) .masthead-word--dark,
-  :root:where(:not([data-theme='light'])) .heading-word--dark {
+  :root:where(:not([data-theme='light'])) .heading-word--dark,
+  :root:where(:not([data-theme='light'])) .heading-word--accent-dark {
     display: block;
   }
 }
 [data-theme='dark'] .masthead-word--light,
-[data-theme='dark'] .heading-word--light {
+[data-theme='dark'] .heading-word--light,
+[data-theme='dark'] .heading-word--accent-light {
   display: none;
 }
 [data-theme='dark'] .masthead-word--dark,
-[data-theme='dark'] .heading-word--dark {
+[data-theme='dark'] .heading-word--dark,
+[data-theme='dark'] .heading-word--accent-dark {
   display: block;
+}
+
+/*
+ * astro.build-inspired accents (design: accent infusion, TASK-11).
+ */
+.chip {
+  display: inline-block;
+  padding: 0.2rem 0.75rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent);
+}
+
+.terminal-line {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--ink-muted);
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+}
+
+.experiment-card {
+  border: 1px solid var(--edge);
+  border-radius: 10px;
+  padding: 0.9rem 1.1rem;
+  transition: transform 0.15s ease;
+}
+.experiment-card:hover {
+  transform: translateY(-2px);
+}
+
+.status-chip {
+  display: inline-block;
+  padding: 0.1rem 0.55rem;
+  border: 1px solid var(--edge);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-muted);
 }
 
 /*
