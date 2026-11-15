@@ -428,7 +428,7 @@ const CODE_FENCE = /^```/m;
 // manifest is present in dist (CI path builds without the licensed font), and
 // directory headings render as <img> with width/height (no layout shift).
 {
-  const HEADING_SLUGS = ['more-is-coming-soon', 'writing', 'projects', 'about'];
+  const HEADING_SLUGS = ['more-is-coming-soon', 'writing', 'projects', 'about', 'experiments'];
   const errors = [];
   const manifestPath = join(DIST, 'assets/word/manifest.json');
   if (!existsSync(DIST)) errors.push('dist/ missing — run `npm run build` first');

@@ -39,7 +39,7 @@ python3 scripts/render_wordmark.py --font "$FONT" --out "$OUT/dark" --text "gonz
 # TASK-9: static page headings as DDC rasters too — same EULA-safe pattern,
 # both ink variants @1x+@2x. The manifest records their dimensions so the
 # HeadingWord component can emit width/height (no layout shift).
-HEADINGS=("more is coming soon" "Writing" "Projects" "About")
+HEADINGS=("more is coming soon" "Writing" "Projects" "About" "Experiments")
 for heading in "${HEADINGS[@]}"; do
   python3 scripts/render_wordmark.py --font "$FONT" --out "$OUT/light" --text "$heading" --ink 242424 --height 30
   python3 scripts/render_wordmark.py --font "$FONT" --out "$OUT/dark" --text "$heading" --ink EAEAEA --height 30
