@@ -40,9 +40,12 @@
  *  17. heading-rasters  — DDC heading PNGs (4 slugs × both inks × 1x+2x) +
  *                        manifest.json ship in dist, and directory headings
  *                        carry width/height attrs (TASK-9, Review Focus 1–3)
- *  18. nav-inventory    — the site nav carries Home + About only — no
- *                        Writing/Projects links anywhere (operator directive
- *                        2026-11-06: those nav entries should not exist)
+ *  18. nav-inventory    — the site nav carries Home + About + Experiments —
+ *                        no Writing/Projects links anywhere (operator
+ *                        directives 2026-11-06 + 2026-11-15)
+ *  19. experiments-source — /experiments/ lists exactly the project entries
+ *                        tagged `experiment` (About links the page; the
+ *                        muted empty state only shows when none are tagged)
  *
  * Lighthouse performance is deliberately NOT gated here: per the plan it is
  * the operator's manual review (`npm run preview`/`npx serve dist`), not a
@@ -65,7 +68,7 @@ const PROJECTS_DIR = join(ROOT, 'src', 'content', 'projects');
 const SITE = 'https://gonzalez.github.io';
 
 const FONT_EXTENSIONS = new Set(['.otf', '.ttf', '.woff', '.woff2', '.eot']);
-const SITEMAP_ROOTS = [`${SITE}/`, `${SITE}/writing/`, `${SITE}/projects/`, `${SITE}/about/`];
+const SITEMAP_ROOTS = [`${SITE}/`, `${SITE}/writing/`, `${SITE}/projects/`, `${SITE}/about/`, `${SITE}/experiments/`];
 
 const failures = [];
 let total = 0;
@@ -140,6 +143,7 @@ if (!existsSync(DIST)) {
     'writing/index.html',
     'projects/index.html',
     'about/index.html',
+    'experiments/index.html',
     ...publishedNotes.map((n) => `writing/${n.slug.toLowerCase()}/index.html`),
   ];
   const missing = expected.filter((p) => !existsSync(join(DIST, p)));
@@ -501,11 +505,50 @@ const CODE_FENCE = /^```/m;
     for (const href of NAV_FORBIDDEN) {
       if (nav.includes(href)) errors.push(`${page}: nav still carries ${href}`);
     }
-    if (!nav.includes('href="/"') || !nav.includes('href="/about/"')) {
-      errors.push(`${page}: nav lost Home or About`);
+    if (!nav.includes('href="/"') || !nav.includes('href="/about/"') || !nav.includes('href="/experiments/"')) {
+      errors.push(`${page}: nav lost Home, About, or Experiments`);
     }
   }
   probe('nav-inventory', errors.length === 0, errors.join('; '));
+}
+
+// --- probe 19: /experiments/ mirrors the tagged projects ---------------------
+
+const EXPERIMENT_TAG = 'experiment';
+{
+  const errors = [];
+  const pagePath = join(DIST, 'experiments/index.html');
+  if (!existsSync(pagePath)) {
+    errors.push('experiments/index.html missing');
+  } else {
+    const page = readFileSync(pagePath, 'utf8');
+    const tagged = [];
+    for (const { file } of projectEntries) {
+      const entry = JSON.parse(readFileSync(join(PROJECTS_DIR, file), 'utf8'));
+      if ((entry.tags ?? []).includes(EXPERIMENT_TAG)) tagged.push(entry.name);
+    }
+    for (const name of tagged) {
+      if (!page.includes(name)) errors.push(`tagged experiment "${name}" not listed`);
+    }
+    for (const { file } of projectEntries) {
+      const entry = JSON.parse(readFileSync(join(PROJECTS_DIR, file), 'utf8'));
+      if ((entry.tags ?? []).includes(EXPERIMENT_TAG)) continue;
+      if (page.includes(entry.name)) errors.push(`untagged "${entry.name}" leaked onto /experiments/`);
+    }
+    if (tagged.length === 0 && !page.includes('Nothing is on the bench right now.')) {
+      errors.push('empty state missing with zero tagged entries');
+    }
+    if (tagged.length > 0 && page.includes('Nothing is on the bench right now.')) {
+      errors.push('empty state shows while experiments are tagged');
+    }
+  }
+  const aboutPath = join(DIST, 'about/index.html');
+  if (!existsSync(aboutPath)) {
+    errors.push('about/index.html missing');
+  } else if (!readFileSync(aboutPath, 'utf8').includes('href="/experiments/"')) {
+    errors.push('about page does not link /experiments/');
+  }
+  probe('experiments-source', errors.length === 0, errors.join('; '));
 }
 
 // --- probe 9: sitemap lists the four roots ----------------------------------

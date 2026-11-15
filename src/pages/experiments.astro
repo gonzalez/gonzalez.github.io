@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeadingWord from '../components/HeadingWord.astro';
+
+// "A place for experiment" (operator, 2026-11-15): project entries tagged
+// `experiment` surface here; tagging is the only way on or off the page.
+const EXPERIMENT_TAG = 'experiment';
+const experiments = (await getCollection('projects')).filter((p) =>
+  (p.data.tags ?? []).includes(EXPERIMENT_TAG)
+);
+---
+
+<BaseLayout
+  title="Experiments — gonzalez"
+  description="A place for experiment — small things in flight."
+>
+  <main class="reading-column">
+    <h1 class="text-3xl font-semibold tracking-tight"><HeadingWord text="Experiments" /></h1>
+    <p class="mt-4">Small things I'm building to see what happens.</p>
+    {
+      experiments.length === 0 ? (
+        <p class="mt-4 text-ink-muted">Nothing is on the bench right now.</p>
+      ) : (
+        <ul class="mt-4 space-y-3">
+          {experiments.map((experiment) => (
+            <li>
+              {experiment.data.github ? (
+                <a href={experiment.data.github}>{experiment.data.name}</a>
+              ) : (
+                <strong>{experiment.data.name}</strong>
+              )}
+              {' — '}
+              {experiment.data.description}{' '}
+              <span class="font-mono text-sm text-ink-muted">({experiment.data.status})</span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </main>
+</BaseLayout>

@@ -27,6 +27,9 @@ const projects = defineCollection({
     name: z.string(),
     description: z.string(),
     technologies: z.array(z.string()).default([]),
+    // `tags` drives cross-cutting pages: e.g. tag `experiment` to surface an
+    // entry on /experiments/ ("a place for experiment", operator 2026-11-15).
+    tags: z.array(z.string()).default([]),
     status: z.string(),
     github: z.string().url().optional(),
     writeUp: z.string().optional(),
