@@ -1,46 +1,38 @@
 @import 'tailwindcss';
 
 /*
- * Garden tokens — palette per docs/plans/2026-11-05-digital-garden-design.md
- * (operator spec): light #FAFAF8 bg / #242424 text / #737373 secondary /
- * #E8E8E5 borders / muted slate accent; dark #151515 / #EAEAEA / #999999 /
- * #303030. System theme detection here; the toggle (Task 3) pins
- * [data-theme="light"|"dark"] and the choices below defer to it.
+ * Garden tokens — modern minimal refresh (TASK-12).
+ * Light: warm paper, near-black ink, quiet grays, violet accent.
+ * Dark: deep neutral bg, soft white ink. System detection + pinned toggle
+ * (see :root[data-theme='dark']) as before.
  */
-
 :root {
-  --paper: #FAFAF8;
-  --ink: #242424;
-  --ink-muted: #737373;
-  --edge: #E8E8E5;
-  --accent: #7c5cff; /* astro-inspired violet (design: accent infusion) */
+  --paper: #FAFAF7;
+  --ink: #1a1a1a;
+  --ink-muted: #6b6b6b;
+  --edge: #e6e6e2;
+  --accent: #7c5cff;
   --accent-soft: rgba(124, 92, 255, 0.14);
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme='light'])) {
-    --paper: #151515;
-    --ink: #EAEAEA;
-    --ink-muted: #999999;
-    --edge: #303030;
+    --paper: #0f0f10;
+    --ink: #e8e8e6;
+    --ink-muted: #9a9a9a;
+    --edge: #262629;
     --accent: #a78bfa;
     --accent-soft: rgba(167, 139, 250, 0.16);
     color-scheme: dark;
   }
 }
 
-/*
- * A pinned dark choice must win on a light-system machine. The media query
- * above cannot cover that case (the system reports light), so the toggle's
- * [data-theme='dark'] gets the same palette explicitly. Pinned light already
- * works: the media query excludes [data-theme='light'].
- */
 :root[data-theme='dark'] {
-  --paper: #151515;
-  --ink: #EAEAEA;
-  --ink-muted: #999999;
-  --edge: #303030;
+  --paper: #0f0f10;
+  --ink: #e8e8e6;
+  --ink-muted: #9a9a9a;
+  --edge: #262629;
   --accent: #a78bfa;
   --accent-soft: rgba(167, 139, 250, 0.16);
   color-scheme: dark;
@@ -53,90 +45,92 @@
   --color-edge: var(--edge);
   --color-accent: var(--accent);
 
-  --font-sans: 'Inter', 'Geist', system-ui, sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, monospace;
+  --font-sans: 'Inter', 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace;
 }
 
 @layer base {
   html {
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
   }
 
   body {
     background-color: var(--paper);
     color: var(--ink);
-    font-size: 1.0625rem; /* 17px body per operator spec */
-    line-height: 1.7;
+    font-size: 1.0625rem;
+    line-height: 1.65;
     margin: 0;
     min-height: 100dvh;
+    font-feature-settings: 'ss01', 'cv11';
   }
+
+  h1, h2, h3, h4 {
+    color: var(--ink);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-top: 0;
+  }
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.375rem; margin-top: 2rem; }
+  h3 { font-size: 1.125rem; margin-top: 1.5rem; }
+
+  p { margin: 0 0 1rem; }
+  p:last-child { margin-bottom: 0; }
 
   a {
     color: var(--accent);
     text-decoration: underline;
     text-decoration-color: var(--accent-soft);
     text-underline-offset: 3px;
+    transition: text-decoration-color 0.15s ease, color 0.15s ease;
+  }
+  a:hover { text-decoration-color: var(--accent); }
+
+  ::selection { background-color: var(--accent-soft); color: var(--ink); }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
   }
 
-  a:hover {
-    text-decoration-color: var(--accent);
-  }
-
-  ::selection {
-    background-color: var(--accent-soft);
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
   }
 }
 
-/*
- * The reading column: 680px content cap per spec. Padding percentages resolve
- * against the containing block, so the full-width box plus this responsive
- * padding yields exactly a 680px content column on wide screens. Below that
- * the max() floors the gutter at 0.5rem, so a 320px viewport still gets a
- * readable 304px line instead of negative/zero width (Review Focus #1).
- * Do NOT add max-width to this rule: with border-box sizing it would subtract
- * the same wide-screen padding from a 680px box and collapse the text.
- */
 .reading-column {
   padding-inline: max(0.5rem, calc((100% - 680px)/2));
 }
 
-/*
- * Masthead ink-variant swap (TASK-3, Review Focus #2). Both rasterized PNGs
- * (light/ #242424, dark/ #EAEAEA) are in the markup; CSS picks one. The
- * selectors mirror the token cases in :root above — system preference, or
- * the ThemeToggle's pinned [data-theme] — so text tokens and the masthead
- * ink can never disagree.
- */
-.masthead {
-  margin: 1rem 0 0;
-}
+.masthead { margin: 1.25rem 0 0; }
 .masthead-word {
   display: block;
   height: auto;
 }
-/* Default: light ink on the light paper — also the safe fallback for browsers
-   with no prefers-color-scheme support (they keep the light token palette). */
+
 .masthead-word--light,
 .heading-word--light,
-.heading-word--accent-light {
-  display: block;
-}
+.heading-word--accent-light { display: block; }
 .masthead-word--dark,
 .heading-word--dark,
-.heading-word--accent-dark {
-  display: none;
-}
-/* Heading rasters: scale with the h1's em so the PNG sits at text-3xl size;
-   width/height attrs on the <img> keep the ratio before it loads.
-   max-width + auto height let the long "more is coming soon" headline shrink
-   proportionally on narrow viewports instead of being squished. */
+.heading-word--accent-dark { display: none; }
+
 .heading-word {
   height: auto;
   width: auto;
   max-width: 100%;
 }
+
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme='light'])) .masthead-word--light,
   :root:where(:not([data-theme='light'])) .heading-word--light,
@@ -151,26 +145,20 @@
 }
 [data-theme='dark'] .masthead-word--light,
 [data-theme='dark'] .heading-word--light,
-[data-theme='dark'] .heading-word--accent-light {
-  display: none;
-}
+[data-theme='dark'] .heading-word--accent-light { display: none; }
 [data-theme='dark'] .masthead-word--dark,
 [data-theme='dark'] .heading-word--dark,
-[data-theme='dark'] .heading-word--accent-dark {
-  display: block;
-}
+[data-theme='dark'] .heading-word--accent-dark { display: block; }
 
-/*
- * astro.build-inspired accents (design: accent infusion, TASK-11).
- */
 .chip {
   display: inline-block;
-  padding: 0.2rem 0.75rem;
+  padding: 0.25rem 0.85rem;
   border: 1px solid var(--accent);
   border-radius: 999px;
   font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--accent);
+  letter-spacing: 0.02em;
 }
 
 .terminal-line {
@@ -178,24 +166,27 @@
   font-family: var(--font-mono);
   font-size: 0.8125rem;
   color: var(--ink-muted);
-  padding: 0.6rem 0.9rem;
+  padding: 0.6rem 0.95rem;
   border: 1px solid var(--edge);
   border-radius: 8px;
+  background-color: color-mix(in srgb, var(--edge) 40%, transparent);
 }
 
 .experiment-card {
   border: 1px solid var(--edge);
   border-radius: 10px;
-  padding: 0.9rem 1.1rem;
-  transition: transform 0.15s ease;
+  padding: 1rem 1.15rem;
+  background-color: color-mix(in srgb, var(--paper) 100%, var(--edge));
+  transition: transform 0.18s ease, border-color 0.18s ease;
 }
 .experiment-card:hover {
   transform: translateY(-2px);
+  border-color: var(--accent);
 }
 
 .status-chip {
   display: inline-block;
-  padding: 0.1rem 0.55rem;
+  padding: 0.1rem 0.6rem;
   border: 1px solid var(--edge);
   border-radius: 999px;
   font-family: var(--font-mono);
@@ -203,52 +194,39 @@
   color: var(--ink-muted);
 }
 
-/*
- * Theme toggle — a quiet mono control that inherits the link ink.
- */
 .theme-toggle {
   margin-left: auto;
   border: 1px solid var(--edge);
-  border-radius: 4px;
-  padding: 0.1rem 0.5rem;
+  border-radius: 6px;
+  padding: 0.25rem 0.6rem;
   background: none;
   color: var(--ink-muted);
   font-family: var(--font-mono);
   font-size: 0.75rem;
   text-decoration: none;
   cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
 }
 .theme-toggle:hover {
   border-color: var(--ink-muted);
   color: var(--ink);
 }
 
-/*
- * Syntax highlighting — Shiki emits light token colors resolved inline plus
- * the dark palette as `--shiki-dark` CSS variables (astro.config.mjs
- * shikiConfig.themes). Dark override flips only the `color` palette; the
- * pre background stays a token so code blocks sit in the paper, everywhere.
- */
 pre.astro-code,
 .astro-code {
   margin: 1.5rem 0;
-  padding: 0.75rem 1rem;
+  padding: 0.85rem 1.1rem;
   border: 1px solid var(--edge);
-  border-radius: 6px;
+  border-radius: 8px;
   font-family: var(--font-mono);
   font-size: 0.875rem;
   line-height: 1.7;
   overflow-x: auto;
 }
-/* Token-aware override of Shiki's inline theme background: the block sits in
-   the paper palette (the var is theme-aware) rather than GitHub's editor
-   white. The `[style]` bump wins specificity over the inline style. */
 .astro-code[style] {
-  background-color: var(--edge) !important;
-  color: var(--ink); /* fallback while the light tokens resolve inline */
+  background-color: color-mix(in srgb, var(--edge) 55%, var(--paper)) !important;
+  color: var(--ink);
 }
-/* Dark palette: Shiki parked every dark token color in --shiki-dark of each
-   span; both unpinned (system dark) and pinned-dark users flip to it. */
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme='light'])) .astro-code,
   :root:where(:not([data-theme='light'])) .astro-code span {
@@ -260,12 +238,6 @@ pre.astro-code,
   color: var(--shiki-dark) !important;
 }
 
-/*
- * Reading progress (optional per spec): a 2px accent line pinned to the
- * viewport top on article pages, driven by a tiny inline script (no lib).
- * prefers-reduced-motion gets the bar hidden outright — motion-free is
- * motion-free, and the script also stands down between updates.
- */
 .reading-progress {
   position: fixed;
   inset: 0 0 auto 0;
@@ -280,24 +252,28 @@ pre.astro-code,
   background-color: var(--accent);
 }
 @media (prefers-reduced-motion: reduce) {
-  .reading-progress {
-    display: none;
-  }
+  .reading-progress { display: none; }
 }
 
-/*
- * TOC (conditional — injected only for notes with ≥ 3 h2 headings): a mono
- * list reading like a file's section index, not a SaaS card.
- */
 .toc {
   margin-block: 1.5rem;
-  padding: 0.75rem 1rem;
+  padding: 0.85rem 1.1rem;
   border: 1px solid var(--edge);
-  border-radius: 6px;
+  border-radius: 8px;
   font-family: var(--font-mono);
   font-size: 0.8125rem;
+  background-color: color-mix(in srgb, var(--edge) 30%, transparent);
 }
 .toc-label {
   margin: 0 0 0.5rem;
   color: var(--ink-muted);
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+}
+
+/* Modern minimal: subtle divider + spacing helpers */
+hr {
+  border: none;
+  border-top: 1px solid var(--edge);
+  margin: 2rem 0;
 }

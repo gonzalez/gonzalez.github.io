@@ -44,8 +44,8 @@ const formatDate = (date: Date) =>
       <div class="reading-progress-bar" data-reading-progress-bar></div>
     </div>
     <article>
-      <header>
-        <p class="font-mono text-sm text-ink-muted">
+      <header class="space-y-2">
+        <p class="font-mono text-xs text-ink-muted uppercase tracking-wider">
           <span data-maturity={maturity}>{maturity}</span>
           {' · '}
           <time datetime={createdDate.toISOString()}>{formatDate(createdDate)}</time>
@@ -66,8 +66,8 @@ const formatDate = (date: Date) =>
             )
           }
         </p>
-        <h1 class="mt-2 text-3xl font-semibold tracking-tight">{title}</h1>
-        <p class="mt-2 text-ink-muted">{description}</p>
+        <h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
+        <p class="text-ink-muted">{description}</p>
       </header>
       {toc && toc.length >= 3 && <Toc items={toc} />}
       <div class="mt-6">

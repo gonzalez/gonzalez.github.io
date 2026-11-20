@@ -37,8 +37,8 @@ const {
   </head>
   <body>
     <header class="reading-column">
-      <nav aria-label="Site" class="flex flex-wrap items-baseline gap-4 py-4 text-sm">
-        <a href="/">Home</a>
+      <nav aria-label="Site" class="flex flex-wrap items-center gap-x-6 gap-y-2 py-6 text-sm">
+        <a href="/" class="font-medium">Home</a>
         <a href="/about/">About</a>
         <a href="/experiments/">Experiments</a>
         <ThemeToggle class="ml-auto" />
@@ -46,7 +46,7 @@ const {
     </header>
     <slot />
     <footer class="reading-column">
-      <div class="flex flex-wrap items-baseline gap-4 py-6 text-sm text-ink-muted">
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-2 py-8 text-sm text-ink-muted border-t border-edge">
         <p>DDC Hardware 45 © Aaron James Draplin &amp; Brian Bonislawsky via DDC Fonts – <a href="https://www.ddcfonts.com">www.ddcfonts.com</a></p>
         <p class="ml-auto"><a href="/rss.xml">RSS</a></p>
       </div>

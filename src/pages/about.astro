@@ -9,14 +9,16 @@ import HeadingWord from '../components/HeadingWord.astro';
 >
   <main class="reading-column">
     <h1 class="text-3xl font-semibold tracking-tight"><HeadingWord text="About" /></h1>
-    <p class="mt-4">
-      This site is my lab — a place for experiment. What's in flight lives on
-      the <a href="/experiments/">experiments</a> page; publishing here is a
-      deliberate push of a static Astro build.
-    </p>
-    <p class="mt-4">
-      No analytics, no comments, no database. To reach me,
-      <a href="https://github.com/gonzalez">GitHub is the door</a>.
-    </p>
+    <div class="mt-6 space-y-4">
+      <p>
+        This site is my lab — a place for experiment. What's in flight lives on
+        the <a href="/experiments/">experiments</a> page; publishing here is a
+        deliberate push of a static Astro build.
+      </p>
+      <p>
+        No analytics, no comments, no database. To reach me,
+        <a href="https://github.com/gonzalez">GitHub is the door</a>.
+      </p>
+    </div>
   </main>
 </BaseLayout>

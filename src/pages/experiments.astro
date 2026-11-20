@@ -17,22 +17,21 @@ const experiments = (await getCollection('projects')).filter((p) =>
 >
   <main class="reading-column">
     <h1 class="text-3xl font-semibold tracking-tight"><HeadingWord text="Experiments" /></h1>
-    <p class="mt-4">Small things I'm building to see what happens.</p>
+    <p class="mt-4 text-ink-muted">Small things I'm building to see what happens.</p>
     {
       experiments.length === 0 ? (
-        <p class="mt-4 text-ink-muted">Nothing is on the bench right now.</p>
+        <p class="mt-6 text-ink-muted">Nothing is on the bench right now.</p>
       ) : (
-        <ul class="mt-4 space-y-3">
+        <ul class="mt-6 space-y-4">
           {experiments.map((experiment) => (
             <li class="experiment-card">
               {experiment.data.github ? (
-                <a href={experiment.data.github}>{experiment.data.name}</a>
+                <a href={experiment.data.github} class="font-medium">{experiment.data.name}</a>
               ) : (
                 <strong>{experiment.data.name}</strong>
               )}
-              {' — '}
-              {experiment.data.description}{' '}
-              <span class="status-chip">{experiment.data.status}</span>
+              <span class="mt-1 block text-ink-muted">{experiment.data.description}</span>
+              <span class="status-chip mt-2 inline-block">{experiment.data.status}</span>
             </li>
           ))}
         </ul>
