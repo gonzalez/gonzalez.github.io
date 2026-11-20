@@ -13,6 +13,8 @@
   --edge: #e6e6e2;
   --accent: #7c5cff;
   --accent-soft: rgba(124, 92, 255, 0.14);
+  /* Site-wide background layers (TASK-13): grain + accent glow. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   color-scheme: light;
 }
 
@@ -24,6 +26,7 @@
     --edge: #262629;
     --accent: #a78bfa;
     --accent-soft: rgba(167, 139, 250, 0.16);
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     color-scheme: dark;
   }
 }
@@ -35,6 +38,7 @@
   --edge: #262629;
   --accent: #a78bfa;
   --accent-soft: rgba(167, 139, 250, 0.16);
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   color-scheme: dark;
 }
 
@@ -63,12 +67,21 @@
 
   body {
     background-color: var(--paper);
+    background-image:
+      radial-gradient(1100px 520px at 92% -8%, var(--accent-soft), transparent 62%),
+      var(--grain);
+    background-repeat: no-repeat, repeat;
+    background-size: 100% 100%, 220px 220px;
+    background-attachment: scroll, scroll;
     color: var(--ink);
     font-size: 1.0625rem;
     line-height: 1.65;
     margin: 0;
     min-height: 100dvh;
     font-feature-settings: 'ss01', 'cv11';
+  }
+  @media print {
+    body { background-image: none; }
   }
 
   h1, h2, h3, h4 {
